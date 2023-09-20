@@ -1,0 +1,20 @@
+package ${package};
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+* <p>
+*   启动类
+* </p>
+*
+* @author ${author}
+* @since ${datetime}
+*/
+
+@SpringBootApplication(scanBasePackages = {"cn.hutool", "${package}"})
+public class ${modelnameCase}Application {
+    public static void main(String[] args) {
+        SpringApplication.run(${modelnameCase}Application.class, args);
+    }
+}

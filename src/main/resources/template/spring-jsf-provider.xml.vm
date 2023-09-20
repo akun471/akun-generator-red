@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jsf="http://jsf.jd.com/schema/jsf"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://jsf.jd.com/schema/jsf http://jsf.jd.com/schema/jsf/jsf.xsd">
+
+    <jsf:registry id="jsfRegistry" protocol="jsfRegistry" index="i.jsf.jd.com"/>
+    <!-- 服务端 -->
+    <jsf:server id="jsf" protocol="jsf" threads="500" queues="10000"/>
+
+
+
+
+
+    #foreach($tableName in $tableNameList)
+    <!--  ${tableName}杰夫服务 -->
+    <jsf:provider id="${tableName}ServiceProvider"
+                  interface="${package}.api.service.${tableName.substring(0,1).toUpperCase()}${tableName.substring(1)}Service"
+                  alias="huishou-${server-provider-room}"
+                  ref="${tableName}ServiceImpl" server="jsf">
+    </jsf:provider>
+    #end
+</beans>

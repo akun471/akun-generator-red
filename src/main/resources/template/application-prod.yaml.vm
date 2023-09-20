@@ -1,0 +1,59 @@
+server:
+  port: ${port}
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  aop:
+    proxy-target-class: true
+  datasource:
+    dynamic:
+      druid:
+        initial-size: 10
+        max-active: 100
+        min-idle: 10
+        max-wait: 60000
+        max-pool-prepared-statement-per-connection-size: 20
+        time-between-eviction-runs-millis: 60000
+        min-evictable-idle-time-millis: 300000
+        filters: stat
+        maxActive: 20
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        Webstatfilter:
+          exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
+        StatViewServlet:
+          loginUsername: op-admin
+          loginPassword: 1q2w3e4r
+      strict: true #启用严格模式,严格模式下未匹配到数据源直接报错
+      p6spy: true # 默认false,建议线上关闭。
+      primary: ${pollName}
+      datasource:
+          ${pollName}:
+        driverClassName: ${driverClassName}
+        url: ${url}
+        username: ${username}
+        password: ${password}
+  # freemarker config
+  freemarker:
+    content-type=: text/html
+    suffix: .html
+    settings:
+      classic_compatible: true
+      number_format: 0
+    prefer-file-system-access: true
+    template-loader-path: classpath:/templates/
+    check-template-location: true
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  typeAliasesPackage: ${package}.entity
+  configuration:
+    mapUnderscoreToCamelCase: true
+    cache-enabled: true
+    localCacheScope: SESSION
+logging:
+  config: classpath:logback.xml

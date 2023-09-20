@@ -1,0 +1,43 @@
+package ${package}.config;
+
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import org.apache.ibatis.reflection.MetaObject;
+
+import java.sql.Timestamp;
+
+/**
+ * <p>
+ * 自定义实现填充处理类
+ * 可以在数据入库前，针对插入或者更新操作，对操作元对象进行数据填充;
+ * 元对象字段填充控制器抽象类，实现公共字段自动写入
+ * 所有入参的 MetaObject 必定是 entity 或其子类的 MetaObject
+ * </p>
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+public class MyMetaObjectHandler implements MetaObjectHandler {
+
+    /**
+     * 插入填充
+     *
+     * @param metaObject 元对象
+     */
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        setFieldValByName("createTime", new Timestamp(System.currentTimeMillis()), metaObject);
+        setFieldValByName("updateTime", new Timestamp(System.currentTimeMillis()), metaObject);
+
+    }
+
+    /**
+     * 更新填充
+     *
+     * @param metaObject 元对象
+     */
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        setFieldValByName("updateTime", new Timestamp(System.currentTimeMillis()), metaObject);
+    }
+}

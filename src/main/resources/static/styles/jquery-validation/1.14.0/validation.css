@@ -1,0 +1,14 @@
+input.error {
+	border: 1px solid red;
+}
+
+label.error {
+	padding-left: 16px;
+	padding-bottom: 2px;
+	font-weight: bold;
+	color: red;
+}
+
+label.checked {
+	color: blue;
+}

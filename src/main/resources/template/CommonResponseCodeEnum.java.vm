@@ -1,0 +1,74 @@
+package ${package}.api.enums;
+
+/**
+ * 响应Bean公共状态响应码枚举
+ *
+ * @author akun
+ * @date 2020/07/28
+ */
+public enum CommonResponseCodeEnum {
+
+    /**
+     * 无数据
+     */
+    OK(200, "操作成功"),
+    /**
+     * 参数错误
+     */
+    PARAM_ERROR(400, "参数错误"),
+    /**
+     * 操作失败
+     */
+    FAIL(404, "操作失败"),
+    /**
+     * 未登录
+     */
+    NOT_LOGIN(501, "未登录"),
+    /**
+     * 无权限
+     */
+    NOT_AUTH(502, "无权限"),
+    /**
+     * 无数据
+     */
+    NOT_DATA(511, "无数据"),
+    /**
+     * 数据无效
+     */
+    INVALID_DATA(512, "数据无效"),
+
+    /**
+     * 超出调用现在
+     */
+    LIMIT_EXCEEDED(530, "已超出调用次数")
+    ;
+
+    /**
+     * 构造
+     * @param code
+     * @param message
+     */
+    CommonResponseCodeEnum(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    /**
+     * 状态码
+     */
+    private int code;
+
+    /**
+     * 消息
+     */
+    private String message;
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+}

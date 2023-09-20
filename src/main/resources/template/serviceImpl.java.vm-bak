@@ -1,0 +1,187 @@
+package ${package}.service.impl;
+
+import ${package}.api.dto.${className}ParamDto;
+import ${package}.entity.${className};
+import ${package}.service.BaseService;
+import ${package}.service.convert.${className}Converter;
+import ${package}.api.service.${className}Service;
+import ${package}.manager.${className}Manager;
+import com.akun.constant.AppName;
+import com.jd.ump.profiler.CallerInfo;
+import com.jd.ump.profiler.proxy.Profiler;
+import com.baomidou.mybatisplus.mapper.Condition;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
+import com.akun.vo.CommonResponse;
+import com.alibaba.fastjson.JSONObject;
+import java.io.Serializable;
+
+import java.util.Arrays;
+
+/**
+ * <p>
+ * $!{comments} 服务实现类
+ * </p>
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Service
+@Slf4j
+public class ${className}ServiceImpl extends BaseService implements ${className}Service  {
+
+    private final ${className}Manager ${secondModuleName}Manager;
+
+    @Autowired
+    public ${className}ServiceImpl(${className}Manager ${secondModuleName}Manager) {
+        super.service = ${secondModuleName}Manager;
+        this.${secondModuleName}Manager = ${secondModuleName}Manager;
+    }
+
+
+    @Override
+    public CommonResponse add${className}(${className}ParamDto ${secondModuleName}ParamDto){
+        CallerInfo info = Profiler.registerInfo("${className}ServiceImpl.add${className}", AppName.HUISHOU_ORDER_HTTP.getValue(), false, true);
+        try {
+            log.info("${className}ServiceImpl --> add${className} param: {}", ${secondModuleName}ParamDto);
+            ${className} ${secondModuleName} = ${className}Converter.CONVERTER.to${className}(${secondModuleName}ParamDto);
+            return CommonResponse.success(${secondModuleName}Manager.insert(${secondModuleName}));
+        } catch (Exception e) {
+            log.info("${className}ServiceImpl --> add${className}   error:", e);
+            Profiler.functionError(info);
+            return CommonResponse.fail();
+        } finally {
+            Profiler.registerInfoEnd(info);
+        }
+    }
+
+    @Override
+    public CommonResponse addOrUpdate(${className}ParamDto ${secondModuleName}ParamDto){
+        CallerInfo info = Profiler.registerInfo("${className}ServiceImpl.addOrUpdate${className}", AppName.HUISHOU_ORDER_HTTP.getValue(), false, true);
+        try {
+            log.info("${className}ServiceImpl --> addOrUpdate${className} param: {}", ${secondModuleName}ParamDto);
+            ${className} ${secondModuleName} = ${className}Converter.CONVERTER.to${className}(${secondModuleName}ParamDto);
+            return CommonResponse.success(${secondModuleName}Manager.insertOrUpdate(${secondModuleName}));
+        } catch (Exception e) {
+            log.info("${className}ServiceImpl --> addOrUpdate${className}   error:", e);
+            Profiler.functionError(info);
+            return CommonResponse.fail();
+        } finally {
+            Profiler.registerInfoEnd(info);
+        }
+    }
+
+    @Override
+    public CommonResponse insertOrUpdateAllColumn(${className}ParamDto ${secondModuleName}ParamDto){
+        CallerInfo info = Profiler.registerInfo("${className}ServiceImpl.insertOrUpdateAllColumn", AppName.HUISHOU_ORDER_HTTP.getValue(), false, true);
+        try {
+            log.info("${className}ServiceImpl --> insertOrUpdateAllColumn param: {}", ${secondModuleName}ParamDto);
+            ${className} ${secondModuleName} = ${className}Converter.CONVERTER.to${className}(${secondModuleName}ParamDto);
+            return CommonResponse.success(${secondModuleName}Manager.insertOrUpdateAllColumn(${secondModuleName}));
+        } catch (Exception e) {
+            log.info("${className}ServiceImpl --> insertOrUpdateAllColumn   error:", e);
+            Profiler.functionError(info);
+            return CommonResponse.fail();
+        } finally {
+            Profiler.registerInfoEnd(info);
+        }
+    }
+
+    @Override
+    public CommonResponse edit${className}(${className}ParamDto ${secondModuleName}ParamDto){
+        CallerInfo info = Profiler.registerInfo("${className}ServiceImpl.edit${className}", AppName.HUISHOU_ORDER_HTTP.getValue(), false, true);
+        try {
+            log.info("${className}ServiceImpl --> edit${className} param: {}", ${secondModuleName}ParamDto);
+            ${className} ${secondModuleName} = ${className}Converter.CONVERTER.to${className}(${secondModuleName}ParamDto);
+            return CommonResponse.success(${secondModuleName}Manager.updateById(${secondModuleName}));
+        } catch (Exception e) {
+            log.info("${className}ServiceImpl --> edit${className}   error:", e);
+            Profiler.functionError(info);
+            return CommonResponse.fail();
+        } finally {
+            Profiler.registerInfoEnd(info);
+        }
+    }
+
+    @Override
+    public CommonResponse modify${className}State(JSONObject jsonObject){
+        return null;
+    }
+
+    @Override
+    public CommonResponse delete${className}(Serializable id){
+        CallerInfo info = Profiler.registerInfo("${className}ServiceImpl.delete${className}", AppName.HUISHOU_ORDER_HTTP.getValue(), false, true);
+        try {
+            log.info("${className}ServiceImpl --> delete${className} param: {}", id);
+            return CommonResponse.success(${secondModuleName}Manager.deleteById(id));
+        } catch (Exception e) {
+            log.info("${className}ServiceImpl --> delete${className}   error:", e);
+            Profiler.functionError(info);
+            return CommonResponse.fail();
+        } finally {
+            Profiler.registerInfoEnd(info);
+        }
+    }
+
+    @Override
+    public CommonResponse delete${className}(String idAry){
+        CallerInfo info = Profiler.registerInfo("${className}ServiceImpl.delete${className}", AppName.HUISHOU_ORDER_HTTP.getValue(), false, true);
+        try {
+            log.info("${className}ServiceImpl --> delete${className} param: {}", idAry);
+            return CommonResponse.success(${secondModuleName}Manager.deleteBatchIds(Arrays.asList(idAry.split(","))));
+        } catch (Exception e) {
+            log.info("${className}ServiceImpl --> delete${className}   error:", e);
+            Profiler.functionError(info);
+            return CommonResponse.fail();
+        } finally {
+            Profiler.registerInfoEnd(info);
+        }
+    }
+
+    @Override
+    public CommonResponse getAll${className}(){
+        CallerInfo info = Profiler.registerInfo("${className}ServiceImpl.getAll${className}", AppName.HUISHOU_ORDER_HTTP.getValue(), false, true);
+        try {
+            return CommonResponse.success(${secondModuleName}Manager.selectList(Condition.create()));
+        } catch (Exception e) {
+            log.info("${className}ServiceImpl --> getAll${className}   error:", e);
+            Profiler.functionError(info);
+            return CommonResponse.fail();
+        } finally {
+            Profiler.registerInfoEnd(info);
+        }
+    }
+
+    @Override
+    public CommonResponse getPage${className}(JSONObject jsonObject){
+        CallerInfo info = Profiler.registerInfo("${className}ServiceImpl.getPage${className}", AppName.HUISHOU_ORDER_HTTP.getValue(), false, true);
+        try {
+            log.info("${className}ServiceImpl --> getPage${className} param: {}", jsonObject);
+            return getPage(jsonObject);
+        } catch (Exception e) {
+            log.info("${className}ServiceImpl --> getPage${className}   error:", e);
+            Profiler.functionError(info);
+            return CommonResponse.fail();
+        } finally {
+            Profiler.registerInfoEnd(info);
+        }
+    }
+
+    @Override
+    public CommonResponse get${className}ById(Integer id){
+        CallerInfo info = Profiler.registerInfo("${className}ServiceImpl.get${className}ById", AppName.HUISHOU_ORDER_HTTP.getValue(), false, true);
+        try {
+            log.info("${className}ServiceImpl --> get${className}ById param: {}", id);
+            return CommonResponse.success(${secondModuleName}Manager.selectById(id));
+        } catch (Exception e) {
+            log.info("${className}ServiceImpl --> get${className}ById   error:", e);
+            Profiler.functionError(info);
+            return CommonResponse.fail();
+        } finally {
+            Profiler.registerInfoEnd(info);
+        }
+    }
+
+}

@@ -1,0 +1,39 @@
+package ${package}.api.service;
+
+import ${package}.api.dto.${className}ParamDto;
+import com.akun.vo.CommonResponse;
+import com.alibaba.fastjson.JSONObject;
+import java.io.Serializable;
+
+
+/**
+* <p>
+    * $!{comments} 服务类
+    * </p>
+*
+* @author ${author}
+* @since ${datetime}
+*/
+public interface ${className}Service {
+
+    public CommonResponse add${className}(${className}ParamDto ${secondModuleName}ParamDto);
+
+    public CommonResponse addOrUpdate(${className}ParamDto ${secondModuleName}ParamDto);
+
+    public CommonResponse insertOrUpdateAllColumn(${className}ParamDto ${secondModuleName}ParamDto);
+
+    public CommonResponse edit${className}(${className}ParamDto ${secondModuleName}ParamDto);
+
+    public CommonResponse modify${className}State(JSONObject jsonObject);
+
+    public CommonResponse delete${className}(Serializable id);
+
+    public CommonResponse delete${className}(String idAry);
+
+    public CommonResponse getAll${className}();
+
+    public CommonResponse getPage${className}(JSONObject jsonObject);
+
+    public CommonResponse get${className}ById(Integer id);
+
+}

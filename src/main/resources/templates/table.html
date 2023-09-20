@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8"></meta>
+    <title>代码生成器管理管理</title>
+
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap/3.3.7/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap/3.3.7/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap-table/bootstrap-table.min.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/jquery.gritter/jquery.gritter.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/jquery-ui/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap-edit/bootstrap-editable.css">
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap-switch/bootstrap-switch.css">
+    <link rel="stylesheet" type="text/css" href="styles/jquery-validation/1.14.0/validation.css"/>
+    <!-- END PAGE LEVEL STYLES -->
+
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script type="text/javascript" src="scripts/jquery/3.2.1/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap/3.3.7/bootstrap.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-table/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-table/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-switch/bootstrap-switch.js"></script>
+    <script type="text/javascript" src="scripts/jquery.gritter/jquery.gritter.js"></script>
+    <script type="text/javascript" src="scripts/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Underscore一个JavaScript实用库，提供了一整套函数式编程的实用功能，但是没有扩展任何JavaScript内置对象。 -->
+    <script type="text/javascript" src="scripts/underscore.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-edit/bootstrap-editable.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-edit/bootstrap-table-editable.js"></script>
+    <script type="text/javascript" src="scripts/jquery-validation/1.14.0/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery-validation/1.14.0/messages_zh.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery-validation/1.14.0/validate-methods.js"></script>
+    <script type="text/javascript" src="scripts/jquery-validation/1.14.0/additional-methods.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script type="text/javascript" src="scripts/common.js"></script>
+    <script type="text/javascript" src="scripts/appjs/table.js"></script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            // 设置underscore的template，将模板匹配字符改为{{}}
+            _.templateSettings = {
+                evaluate: /\{\{([\s\S]+?)\}\}/g,
+                interpolate: /\{\{=([\s\S]+?)\}\}/g,
+                escape: /\{\{-([\s\S]+?)\}\}/g
+            };
+            new IBCP_tableList({});
+        });
+    </script>
+    <script id="temp_table_action" type="text/template">
+        <span data-sign="action_table" data-id="{{=id}}"
+              data-state="{{=state}}">
+		            {{ _.each(actions, function(action){ }}
+		            <a class="btn btn-sm {{=action.color}} {{=action.dis}}" data-action="{{=action.value}}">{{=action.name}}</a>
+		            {{ }); }}
+		        </span>
+    </script>
+</head>
+
+<body class="page-header-fixed">
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#"></a>
+        </div>
+    </div>
+</nav>
+
+<!-- BEGIN PAGE CONTAINER-->
+<div class="container-fluid">
+    <div class="row-fluid">
+        <ul class="nav nav-tabs" style="font-weight:600">
+            <li class="active"><a href="#d1" id="table_tab" data-toggle="tab">代码生成器</a></li>
+            <li class=""><a href="#d2" id="dataSourceEntity_tab" data-toggle="tab">动态数据源</a></li>
+        </ul>
+    </div>
+    <!-- 代码生成器-->
+    <div id="div_table_list" class="row-fluid">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"> 代码生成器</h3>
+            </div>
+            <div class="portlet-body form">
+                <!-- BEGIN FORM-->
+                <form class="form-horizontal" role="form" action="#" method="post"
+                      enctype="multipart/form-data">
+                    <div class="form-group" style="margin-top:15px">
+
+                        <label class="control-label col-sm-1" for="s_ds_tablelist">数据源:</label>
+                        <div class="col-sm-3">
+                            <select class="form-control" id="s_ds_tablelist">
+                                <option></option>
+                            </select>
+                        </div>
+
+                        <label class="control-label col-sm-1" for="s_name_tablelist">表名:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="s_name_tablelist" placeholder="多个表用逗号[,]分隔"
+                                   title="多个表用逗号[,]分隔"/>
+                        </div>
+
+                        <div class="col-sm-2" style="float: right;">
+                            <button type="button" style="margin-left:50px" id="btn_search_tablelist"
+                                    class="btn btn-primary">查询
+                            </button>
+                        </div>
+                    </div>
+                    <hr style="width: 100%">
+                    <div class="form-group" style="margin-top:15px">
+                        <label class="control-label col-sm-1" for="g_modelName_tablelist">项目名:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="g_modelName_tablelist" placeholder="example"/>
+                        </div>
+
+                        <label class="control-label col-sm-1" for="g_package_tablelist">包路径:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="g_package_tablelist" placeholder="com.akun"/>
+                        </div>
+                        <label class="control-label col-sm-1" for="g_port_tablelist">端口号:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="g_port_tablelist" placeholder="8888"/>
+                        </div>
+                        <label class="control-label col-sm-1" for="g_isLogic_tablelist">逻辑删除:</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" id="g_isLogic_tablelist">
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                        </div>
+                        <label class="control-label col-sm-1" for="g_tablePrefix_tablelist">表前缀:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="g_tablePrefix_tablelist" placeholder="t_"/>
+                        </div>
+                        <label class="control-label col-sm-1" for="g_tableFieldPrefix_tablelist">表字段前缀:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="g_tableFieldPrefix_tablelist" placeholder="f_"/>
+                        </div>
+                        <label class="control-label col-sm-1" for="g_author_tablelist">作者:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="g_author_tablelist" placeholder="Akun"/>
+                        </div>
+                        <label class="control-label col-sm-1" for="g_email_tablelist">邮箱:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="g_email_tablelist"
+                                   placeholder="wukunkun@reddatetech.com"/>
+                        </div>
+
+                        <div class="col-sm-2" style="float: right;">
+                            <button type="button" style="margin-left:50px;margin-top:20px" id="btn_generator_tablelist"
+                                    class="btn btn-success">生成代码
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel-body" style="padding-bottom:0px;">
+                <!--</div>-->
+                <table id="table_tablelist"></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- dataSource 配置表列表-->
+    <div id="div_dataSourceEntity_list" class="row-fluid hide">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"> 动态数据源管理</h3>
+            </div>
+            <div class="portlet-body form">
+                <!-- BEGIN FORM-->
+                <form class="form-horizontal" role="form" action="#" method="post"
+                      enctype="multipart/form-data">
+                    <div class="form-group" style="margin-top:15px">
+
+
+                        <label class="control-label col-sm-1" for="s_poll_name_dataSourceEntitylist">数据源名:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="s_poll_name_dataSourceEntitylist" placeholder="数据源名称,多个条件用[,]分割" title="数据源名称,多个条件用[,]分割"/>
+                        </div>
+
+                        <label class="control-label col-sm-1" for="s_url_dataSourceEntitylist">连接信息:</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="s_url_dataSourceEntitylist" placeholder="数据库名称或者IP信息,多个条件用[,]分割" tittle="数据库名称或者IP信息,多个条件用[,]分割"/>
+                        </div>
+
+                        <label class="control-label col-sm-1" for="s_state_dataSourceEntitylist">状态:</label>
+                        <div class="col-sm-2">
+                            <select class="form-control" id="s_state_dataSourceEntitylist" data-placeholder="请选择状态"/>
+                            <option value="">全部</option>
+                            <option value="1">有效</option>
+                            <option value="0">无效</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2"  style="float: right;">
+                            <button type="button" style="margin-left:50px" id="btn_search_dataSourceEntitylist"
+                                    class="btn btn-primary">查询
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel-body" style="padding-bottom:0px;">
+
+                <!--<div id="toolbar_dataSourceEntitylist">-->
+                <div class="btn-group btn-group-sm">
+                    <button id="btn_add_dataSourceEntitylist" type="button" class="btn btn-primary btn-lg">
+                        <span class="glyphicon">新增数据源</span>
+                    </button>
+                </div>
+                <!--</div>-->
+                <table id="table_dataSourceEntitylist"></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑dataSource 配置表-->
+    <div id="div_edit_dataSourceEntity" class="row-fluid hide">
+        <h3 class="form-section">
+            <button id="btn_back_dataSourceEntitylist" class="btn btn-success">
+                返回列表
+            </button>
+        </h3>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 id="title_dataSourceEntity_detail" class="panel-title">数据源编辑:</h3>
+            </div>
+            <div class="portlet-body form">
+                <!-- BEGIN FORM-->
+                <form id="form_dataSourceEntity" class="form-horizontal" role="form" action="#" method="post"
+                      enctype="multipart/form-data">
+                    <input type="hidden" id="form_dataSourceEntity_id" name="id" value=""/>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="form_dataSourceEntity_pollName">数据源名称 ：</label>
+                        <div class="col-sm-3">
+                            <input type="text" id="form_dataSourceEntity_pollName" name="pollName" class="form-control"
+                                   placeholder="推荐ip加库名,例:10.10.121.34_op_ad" title="推荐ip加库名,例:10.10.121.34_op_ad"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="form_dataSourceEntity_driverClassName">driverClassName ：</label>
+                        <div class="col-sm-3">
+                            <input type="text" id="form_dataSourceEntity_driverClassName" name="driverClassName" class="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="form_dataSourceEntity_url">url ：</label>
+                        <div class="col-sm-3">
+                            <input type="text" id="form_dataSourceEntity_url" name="url" class="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="form_dataSourceEntity_username">username ：</label>
+                        <div class="col-sm-3">
+                            <input type="text" id="form_dataSourceEntity_username" name="username" class="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="form_dataSourceEntity_password">password ：</label>
+                        <div class="col-sm-3">
+                            <input type="text" id="form_dataSourceEntity_password" name="password" class="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="form_dataSourceEntity_desc">描述 ：</label>
+                        <div class="col-sm-3">
+                            <textarea id="form_dataSourceEntity_desc" name="desc" class="form-control"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态：</label>
+                        <div class="col-sm-3 switch switch-mini">
+                            <input name="state" value="1" checked type="checkbox"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 50px;">
+                        <div style="float: left;">
+                            <button type="button" style="margin-left:200px" id="btn_dataSourceEntity_save"
+                                    class="btn btn-primary btn-lg">保存
+                            </button>
+                        </div>
+                        <div style="float: left;">
+                            <button type="button" style="margin-left:50px" id="btn_dataSourceEntity_cancle"
+                                    class="btn btn-danger btn-lg" data-toggle="modal" data-target="#backModal">取消
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 模态框（返回） -->
+<div class="modal fade" id="backModal" tabindex="-1" role="dialog"
+     aria-labelledby="tableSaveBackModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" id="tableSaveBackModalTitle">
+                    提示
+                </h4>
+            </div>
+            <div class="modal-body">
+                确定放弃保存吗？
+            </div>
+            <div class="modal-footer">
+                <button id="tableSaveCancle" type="button" class="btn btn-default" data-dismiss="modal">
+                    取消
+                </button>
+                <button id="tableSaveBack" type="button" class="btn btn-primary" data-dismiss="modal">
+                    确认
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<!-- 模态框（删除） -->
+<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="delModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" id="dleModalLabel">
+                    提示
+                </h4>
+            </div>
+            <div class="modal-body">
+                确定要删除吗？
+            </div>
+            <div class="modal-footer">
+                <button id="delCancle" type="button" class="btn btn-default" data-dismiss="modal">
+                    取消
+                </button>
+                <button id="delBack" type="button" class="btn btn-primary">
+                    确认
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div id="modal_confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal_confirm_header"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                </button>
+                <h3 id="modal_confirm_header">确认信息</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modal_confirm_info"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_modal_confirm_ok" class="btn btn-danger" data-dismiss="modal">确定</button>
+                <button class="btn btn-success" data-dismiss="modal" aria-hidden="true">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

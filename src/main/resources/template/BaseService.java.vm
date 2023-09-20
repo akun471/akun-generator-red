@@ -1,0 +1,95 @@
+package ${package}.service;
+
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.mapper.Condition;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.akun.vo.CommonResponse;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+* 基础公共方法类
+*
+* @author ${author}
+* @since ${datetime}
+*/
+@Slf4j
+public class BaseService<T extends Model> {
+
+    public IService service;
+
+
+    public CommonResponse getPage(JSONObject jsonObject) {
+        Page<T> page = null;
+        Condition condition = getCondition(jsonObject);
+        if (jsonObject.getInteger("pageNo") != null && jsonObject.getInteger("pageSize") != null) {
+            page = new Page(jsonObject.getInteger("pageNo"), jsonObject.getInteger("pageSize"));
+        } else {
+            page = new Page(1, 10);
+        }
+        return CommonResponse.success(service.selectPage(page, condition));
+    }
+
+    public Condition getCondition(JSONObject jsonObject) {
+        Condition condition = Condition.create();
+        for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+            String key = entry.getKey();
+            setConditionOrder(condition, entry, key);
+        }
+        return condition;
+    }
+
+    public void setConditionOrder(Condition condition, Map.Entry<String, Object> entry, String key) {
+        if ("orderBy".equals(key)) {
+            if (entry.getValue() != null && !entry.getValue().equals("")) {
+                Map<String, Object> orderBuyMap = (Map<String, Object>) entry.getValue();
+                for (Map.Entry<String, Object> field : orderBuyMap.entrySet()) {
+                    if ("asc".equals(field.getKey())) {
+                        condition.orderBy(humpToLine((String) field.getValue()), true);
+                    } else {
+                        String colums = humpToLine((String) field.getValue());
+                        String[] columsArr = colums.split(",");
+                        StringBuffer sb = new StringBuffer(columsArr[0]).append(" desc");
+                        for (int i = 1; i < columsArr.length; i++) {
+                            sb.append(",").append(columsArr[i]).append(" desc");
+                        }
+                        condition.orderBy(sb.toString());
+                    }
+                }
+            }
+        } else {
+            setConditionInfo(condition, entry, key);
+        }
+    }
+
+    public void setConditionInfo(Condition condition, Map.Entry<String, Object> entry, String key) {
+        if ("partner_code".equals(humpToLine(key))) {
+            // 暂不处理;
+        } else if (!("pageNo".equals(key) || "pageSize".equals(key))) {
+            if (null == entry.getValue()) {
+                condition.isNull(humpToLine(entry.getKey()));
+            } else if (!"".equals(entry.getValue())) {
+                condition.eq(humpToLine(entry.getKey()), entry.getValue().toString().trim());
+            }
+        }
+    }
+
+    private static Pattern humpPattern = Pattern.compile("[A-Z]");
+
+    public static String humpToLine(String str) {
+        Matcher matcher = humpPattern.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, "_" + matcher.group(0).toLowerCase());
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+}

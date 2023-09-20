@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8"></meta>
+    <title>$!{comments}管理</title>
+
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap/3.3.7/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap/3.3.7/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap-table/bootstrap-table.min.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/jquery.gritter/jquery.gritter.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/jquery-ui/jquery-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap-edit/bootstrap-editable.css">
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap-switch/bootstrap-switch.css">
+    <link rel="stylesheet" type="text/css" href="styles/jquery-validation/1.14.0/validation.css"/>
+    <!-- END PAGE LEVEL STYLES -->
+
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script type="text/javascript" src="scripts/jquery/3.2.1/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap/3.3.7/bootstrap.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-table/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-table/bootstrap-table-zh-CN.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-switch/bootstrap-switch.js"></script>
+    <script type="text/javascript" src="scripts/jquery.gritter/jquery.gritter.js"></script>
+    <script type="text/javascript" src="scripts/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Underscore一个JavaScript实用库，提供了一整套函数式编程的实用功能，但是没有扩展任何JavaScript内置对象。 -->
+    <script type="text/javascript" src="scripts/underscore.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-edit/bootstrap-editable.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap-edit/bootstrap-table-editable.js"></script>
+    <script type="text/javascript" src="scripts/jquery-validation/1.14.0/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery-validation/1.14.0/messages_zh.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery-validation/1.14.0/validate-methods.js"></script>
+    <script type="text/javascript" src="scripts/jquery-validation/1.14.0/additional-methods.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script type="text/javascript" src="scripts/common.js"></script>
+    <script type="text/javascript" src="scripts/appjs/${secondModuleName}.js"></script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            // 设置underscore的template，将模板匹配字符改为{{}}
+            _.templateSettings = {
+                evaluate: /\{\{([\s\S]+?)\}\}/g,
+                interpolate: /\{\{=([\s\S]+?)\}\}/g,
+                escape: /\{\{-([\s\S]+?)\}\}/g
+            };
+            new IBCP_${secondModuleName}List({});
+        });
+    </script>
+    <script id="temp_${secondModuleName}_action" type="text/template">
+        <span data-sign="action_${secondModuleName}" data-id="{{=id}}"
+              data-state="{{=state}}">
+		            {{ _.each(actions, function(action){ }}
+		            <a class="btn btn-sm {{=action.color}} {{=action.dis}}" data-action="{{=action.value}}">{{=action.name}}</a>
+		            {{ }); }}
+		        </span>
+    </script>
+</head>
+
+<body class="page-header-fixed">
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#"></a>
+        </div>
+    </div>
+</nav>
+
+<!-- BEGIN PAGE CONTAINER-->
+<div class="container-fluid">
+    <div class="row-fluid">
+        <!-- BEGIN PAGE TITLE & BREADCRUMB-->
+        <h3 class="page-title">
+            $!{comments}管理
+            <small>主要用于编辑、查看、 $!{comments}详情</small>
+        </h3>
+        <!-- END PAGE TITLE & BREADCRUMB-->
+    </div>
+    <!-- $!{comments}列表-->
+    <div id="div_${secondModuleName}_list" class="row-fluid">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"> $!{comments}</h3>
+            </div>
+            <div class="portlet-body form">
+                <!-- BEGIN FORM-->
+                <form class="form-horizontal" role="form" action="#" method="post"
+                      enctype="multipart/form-data">
+                    <div class="form-group" style="margin-top:15px">
+                        #foreach ($column in $columns)
+                            #if(${column.attrname} == "state"||${column.attrname} == "createTime"||${column.attrname} == "updateTime")
+                            #else
+
+                        <label class="control-label col-sm-1" for="s_${column.columnName}_${secondModuleName}list">$column.attrname:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="s_${column.columnName}_${secondModuleName}list"/>
+                        </div>
+                            #end
+                        #end
+                        <label class="control-label col-sm-1" for="s_state_${secondModuleName}list">状态:</label>
+                        <div class="col-sm-3">
+                            <select class="form-control" id="s_state_${secondModuleName}list" data-placeholder="请选择状态"/>
+                                <option value="">全部</option>
+                                <option value="1">有效</option>
+                                <option value="0">无效</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2"  style="float: right;">
+                            <button type="button" style="margin-left:50px" id="btn_search_${secondModuleName}list"
+                                    class="btn btn-primary">查询
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel-body" style="padding-bottom:0px;">
+
+                <!--<div id="toolbar_${secondModuleName}list">-->
+                <div class="btn-group btn-group-sm">
+                    <button id="btn_add_${secondModuleName}list" type="button" class="btn btn-primary btn-lg">
+                        <span class="glyphicon">新增$!{comments}</span>
+                    </button>
+                </div>
+                <!--</div>-->
+                <table id="table_${secondModuleName}list"></table>
+            </div>
+        </div>
+    </div>
+    <!-- 编辑$!{comments}-->
+    <div id="div_edit_${secondModuleName}" class="row-fluid hide">
+        <h3 class="form-section">
+            <button id="btn_back_${secondModuleName}list" class="btn btn-success">
+                返回列表
+            </button>
+        </h3>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 id="title_${secondModuleName}_detail" class="panel-title">$!{comments}:</h3>
+            </div>
+            <div class="portlet-body form">
+                <!-- BEGIN FORM-->
+                <form id="form_${secondModuleName}" class="form-horizontal" role="form" action="#" method="post"
+                      enctype="multipart/form-data">
+                    <input type="hidden" id="form_${secondModuleName}_id" name="id" value=""/>
+                    #foreach ($column in $columns)
+                        #if($column.columnName == "id"||${column.attrname} == "state"||${column.attrname} == "createTime"||${column.attrname} == "updateTime")
+                        #else
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="form_${secondModuleName}_${column.attrname}"><span
+                                class="red">*</span>$column.attrname ：</label>
+                        <div class="col-sm-3">
+                            <input type="text" id="form_${secondModuleName}_${column.attrname}" name="$column.attrname" class="form-control"/>
+                        </div>
+                    </div>
+                        #end
+                    #end
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态：</label>
+                        <div class="col-sm-3 switch switch-mini">
+                            <input name="state" value="1" checked type="checkbox"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 50px;">
+                        <div style="float: left;">
+                            <button type="button" style="margin-left:200px" id="btn_${secondModuleName}_save"
+                                    class="btn btn-primary btn-lg">保存
+                            </button>
+                        </div>
+                        <div style="float: left;">
+                            <button type="button" style="margin-left:50px" id="btn_${secondModuleName}_cancle"
+                                    class="btn btn-danger btn-lg" data-toggle="modal" data-target="#backModal">取消
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 模态框（返回） -->
+<div class="modal fade" id="backModal" tabindex="-1" role="dialog"
+     aria-labelledby="${secondModuleName}SaveBackModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" id="${secondModuleName}SaveBackModalTitle">
+                    提示
+                </h4>
+            </div>
+            <div class="modal-body">
+                确定放弃保存吗？
+            </div>
+            <div class="modal-footer">
+                <button id="${secondModuleName}SaveCancle" type="button" class="btn btn-default" data-dismiss="modal">
+                    取消
+                </button>
+                <button id="${secondModuleName}SaveBack" type="button" class="btn btn-primary" data-dismiss="modal">
+                    确认
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<!-- 模态框（删除） -->
+<div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="delModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                </button>
+                <h4 class="modal-title" id="dleModalLabel">
+                    提示
+                </h4>
+            </div>
+            <div class="modal-body">
+                确定要删除吗？
+            </div>
+            <div class="modal-footer">
+                <button id="delCancle" type="button" class="btn btn-default" data-dismiss="modal">
+                    取消
+                </button>
+                <button id="delBack" type="button" class="btn btn-primary" data-dismiss="modal">
+                    确认
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div id="modal_confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal_confirm_header"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                </button>
+                <h3 id="modal_confirm_header">确认信息</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modal_confirm_info"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="btn_modal_confirm_ok" class="btn btn-danger" data-dismiss="modal">确定</button>
+                <button class="btn btn-success" data-dismiss="modal" aria-hidden="true">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

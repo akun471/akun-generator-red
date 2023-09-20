@@ -1,0 +1,275 @@
+package ${package}.api.vo;
+
+import ${package}.api.enums.CommonResponseCodeEnum;
+
+import java.io.Serializable;
+
+/**
+ * 公共响应结果对象
+ *
+ * @author akun
+ * @date 2020/11/24 13:40
+ */
+public class CommonResponse<T> implements Serializable {
+
+    /**
+     * 序列化
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 响应吗
+     */
+    private int code;
+
+    /**
+     * 响应消息
+     */
+    private String message;
+
+    /**
+     * 响应数据
+     */
+    private T data;
+
+    /**
+     * 空参构造
+     */
+    public CommonResponse() {
+    }
+
+    /**
+     * commonResponseCodeEnum构造
+     */
+    public CommonResponse(CommonResponseCodeEnum commonResponseCodeEnum) {
+        // 如果枚举null直接抛空指针
+        this.code = commonResponseCodeEnum.getCode();
+        this.message = commonResponseCodeEnum.getMessage();
+    }
+
+    /**
+     * commonResponseCodeEnum与数据构造
+     */
+    public CommonResponse(CommonResponseCodeEnum commonResponseCodeEnum, T t) {
+        this.code = commonResponseCodeEnum.getCode();
+        this.message = commonResponseCodeEnum.getMessage();
+        this.data = t;
+    }
+
+    /**
+     * 指定code和message
+     */
+    public CommonResponse(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    /**
+     * 200-成功
+     * @return
+     */
+    public static CommonResponse success() {
+        return new CommonResponse(CommonResponseCodeEnum.OK);
+    }
+
+    /**
+     * 200-成功-带数据
+     * @param t
+     * @return
+     */
+    public static <T> CommonResponse<T> success(T t) {
+        return new CommonResponse<T>(CommonResponseCodeEnum.OK, t);
+    }
+
+    /**
+     * 200-成功-带数据
+     * @param message
+     * @return
+     */
+    public static <T> CommonResponse<T> successMsg(String message) {
+        return new CommonResponse<T>(CommonResponseCodeEnum.OK.getCode(), message);
+    }
+
+    /**
+     * 400-参数错误
+     * @return
+     */
+    public static CommonResponse paramError() {
+        return new CommonResponse(CommonResponseCodeEnum.PARAM_ERROR);
+    }
+
+    /**
+     * 400-参数错误-带数据
+     * @return
+     */
+    public static <T> CommonResponse<T> paramError(T t) {
+        return new CommonResponse<T>(CommonResponseCodeEnum.PARAM_ERROR, t);
+    }
+
+    /**
+     * 404-操作失败
+     * @return
+     */
+    public static CommonResponse fail() {
+        return new CommonResponse(CommonResponseCodeEnum.FAIL);
+    }
+
+    /**
+     * 404-操作失败-带数据
+     * @return
+     */
+    public static <T> CommonResponse<T> fail(T t) {
+        return new CommonResponse<T>(CommonResponseCodeEnum.FAIL, t);
+    }
+
+    /**
+     * -操作失败-带数据
+     * @return
+     */
+    public static <T> CommonResponse<T> failMsg(String message)  {
+        return new CommonResponse<T>(CommonResponseCodeEnum.FAIL.getCode(), message);
+    }
+
+    /**
+     * 501-未登录
+     * @return
+     */
+    public static CommonResponse notLogin() {
+        return new CommonResponse(CommonResponseCodeEnum.NOT_LOGIN);
+    }
+
+    /**
+     * 501-未登录-带数据
+     * @return
+     */
+    public static <T> CommonResponse<T> notLogin(T t) {
+        return new CommonResponse<T>(CommonResponseCodeEnum.NOT_LOGIN, t);
+    }
+
+    /**
+     * 502-无权限
+     * @return
+     */
+    public static CommonResponse notAuth() {
+        return new CommonResponse(CommonResponseCodeEnum.NOT_AUTH);
+    }
+
+    /**
+     * 502-无权限-带数据
+     * @return
+     */
+    public static <T> CommonResponse<T> notAuth(T t) {
+        return new CommonResponse<T>(CommonResponseCodeEnum.NOT_AUTH, t);
+    }
+
+    /**
+     * 511-无数据
+     * @return
+     */
+    public static CommonResponse notData() {
+        return new CommonResponse(CommonResponseCodeEnum.NOT_DATA);
+    }
+
+    /**
+     * 511-无数据-带数据
+     * @return
+     */
+    public static <T> CommonResponse<T> notData(T t) {
+        return new CommonResponse<T>(CommonResponseCodeEnum.NOT_DATA, t);
+    }
+
+    /**
+     * 初始化方法
+     * @param commonResponseCodeEnum
+     * @param t
+     * @return
+     */
+    public static <T> CommonResponse<T> init(CommonResponseCodeEnum commonResponseCodeEnum, T t) {
+        return new CommonResponse<T>(commonResponseCodeEnum, t);
+    }
+
+    /**
+     * 修改状态以及数据方法
+     * @param commonResponseCodeEnum
+     * @param t
+     * @return
+     */
+    public CommonResponse<T> update(CommonResponseCodeEnum commonResponseCodeEnum, T t) {
+        this.code = commonResponseCodeEnum.getCode();
+        this.message = commonResponseCodeEnum.getMessage();
+        this.data = t;
+        return this;
+    }
+
+    /**
+     * 更改状态消息以及数据方法
+     * @param code
+     * @param message
+     * @param t
+     * @return
+     */
+    public CommonResponse<T> update(int code, String message, T t) {
+        this.code = code;
+        this.message = message;
+        this.data = t;
+        return this;
+    }
+
+    /**
+     * 判断当前状态码是否成功
+     * @return
+     */
+    public boolean isSuccess() {
+        return this.code == CommonResponseCodeEnum.OK.getCode();
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    /**
+     * 根据枚举设置响应吗
+     * @param commonResponseCodeEnum
+     */
+    public void setCode(CommonResponseCodeEnum commonResponseCodeEnum) {
+        this.code = commonResponseCodeEnum.getCode();
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    /**
+     * 根据枚举设置消息
+     * @param commonResponseCodeEnum
+     */
+    public void setMessage(CommonResponseCodeEnum commonResponseCodeEnum) {
+        this.message = commonResponseCodeEnum.getMessage();
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "CommonResponse{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                '}';
+    }
+
+}

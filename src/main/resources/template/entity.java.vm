@@ -1,0 +1,99 @@
+package ${package}.entity;
+
+
+import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
+
+
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Data
+@Accessors(chain = true)
+@TableName(value = "${tableName}",resultMap = "BaseResultMap")
+@ApiModel(value="${className}",description="${comments}-${className}")
+public class ${className} extends Model<${className}> {
+
+    /**
+     * 版本号
+     */
+	private static final long serialVersionUID=1L;
+
+#foreach ($column in $columns)
+#if($column.columnName == $pk.columnName)
+    @Override
+    public Serializable pkVal() {
+        return this.$column.attrname;
+    }
+
+    /**
+     * $column.comments
+     */
+    @TableId(value="$column.columnName", type= IdType.AUTO)
+    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    private $column.attrType $column.attrname;
+#elseif($column.columnName == "delete_flag")
+    @TableField("$column.columnName")
+    @TableLogic
+    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    private $column.attrType $column.attrname;
+#elseif($column.columnName == "create_time")
+    /**
+     * 创建时间
+     */
+    @TableField(value = "$column.columnName", fill = FieldFill.INSERT)
+    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    private $column.attrType $column.attrname;
+#elseif($column.columnName == "update_time")
+    /**
+     * 修改时间
+     */
+    @TableField(value = "$column.columnName", fill = FieldFill.INSERT_UPDATE)
+    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    private $column.attrType $column.attrname;
+#else
+    /**
+     * $column.comments
+     */
+    @TableField("$column.columnName")
+    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    private $column.attrType $column.attrname;
+#end
+
+#end
+##
+##	#foreach ($column in $columns)
+##	/**
+##	 * 设置：${column.comments}
+##	 */
+##	public void set${column.attrName}($column.attrType $column.attrname) {
+##			this.$column.attrname = $column.attrname;
+##			}
+##	/**
+##	 * 获取：${column.comments}
+##	 */
+##	public $column.attrType get${column.attrName}() {
+##			return $column.attrname;
+##			}
+##	#end
+
+##	@Override
+##	public String toString() {
+##	    return "${className}{"+
+###foreach ($column in $columns)
+##	"${column.attrName}="+$column.attrname+
+###end
+##		"}";}
+}

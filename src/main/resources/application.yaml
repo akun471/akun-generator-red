@@ -1,0 +1,94 @@
+server:
+  tomcat:
+    max-threads: 10
+    min-spare-threads: 10
+  port: 8777
+
+# mysql
+spring:
+  datasource:
+    dynamic:
+      druid: #以下是全局默认值，可以全局更改
+        initial-size: 5
+        max-active: 10
+        min-idle: 10
+        max-wait: 60000
+        max-pool-prepared-statement-per-connection-size: 5
+        time-between-eviction-runs-millis: 60000
+        min-evictable-idle-time-millis: 300000
+        filters: stat
+        maxActive: 20
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        Webstatfilter:
+          exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
+        StatViewServlet:
+          loginUsername: op-admin
+          loginPassword: 1q2w3e4r
+      primary: primary
+      strict: true #启用严格模式,严格模式下未匹配到数据源直接报错
+      p6spy: true # 默认false,建议线上关闭。
+      datasource:
+        primary:
+          driverClassName: com.mysql.jdbc.Driver
+          url: jdbc:mysql://192.168.1.177:3306/dynamic_data_source?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+          username: root
+          password: Red80@80
+#        TODO   dynamicDataSource高版本才支持，有兼容问题，需要重构部分代码结构
+#          init:
+#            schema: classpath*:db/init_schema.sql # 配置则生效,自动初始化表结构
+#            data: classpath*:db/init_data.sql # 配置则生效,自动初始化数据
+#            continue-on-error: true # 默认true,初始化失败是否继续
+#            separator: ";" # sql默认分号分隔符，一般无需更改
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  thymeleaf:
+    mode: LEGACYHTML5
+    cache: false
+  #    rabbitmq:
+  #        host: 10.163.89.100   # 登录 Rabbitmq 后台管理页面地址为：http://localhost:15672
+  #        port: 5672
+  #        username: guest   # 默认账户
+  #        password: guest   # 默认密码
+  profiles:
+    active:
+# Mybatis配置
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+#mybatis
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.akun.generator.entity
+  global-config:
+    #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+    id-type: 0
+    #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+    field-strategy: 2
+    #驼峰下划线转换
+    db-column-underline: true
+    #刷新mapper 调试神器
+    refresh-mapper: true
+    #数据库大写下划线转换
+    #capital-mode: true
+    #序列接口实现类配置
+    #key-generator: cn.jeefast.xxx
+    #逻辑删除配置
+    logic-delete-value: 0
+    logic-not-delete-value: 1
+    meta-object-handler: cn.gitv.op.common.mybatisPlus.MyMetaObjectHandler
+    #自定义填充策略接口实现
+    #meta-object-handler: cn.jeefast.xxx
+    #自定义SQL注入器
+    #sql-injector: cn.jeefast.xxx
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+
+logging:
+  config: classpath:logback.xml

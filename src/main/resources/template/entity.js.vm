@@ -1,0 +1,562 @@
+var IBCP_${secondModuleName}List = function (options) {
+    this.init(options);
+};
+var sort = "";
+var order = "";
+var ${secondModuleName}Id = null;
+var state = 1;
+IBCP_${secondModuleName}List.prototype = {
+    init: function (options) {
+        this.options = options;
+        var that = this;
+
+        //1.初始化Table
+        var ${secondModuleName}ListTable = that.init${className}ListTable();
+        //加载表格
+            ${secondModuleName}ListTable.init();
+
+        this.${secondModuleName}Detail = new IBCP_${secondModuleName}Detail({
+                ${secondModuleName}TableRefresh: function () {
+                that.tableRefresh();
+            }
+        });
+        //搜索
+        $("#btn_search_${secondModuleName}list").off("click.ibcp").on("click.ibcp", function () {
+            $("#btn_search_${secondModuleName}list").addClass("disabled");
+            that.tableSearch();
+        });
+        //添加
+        $("#btn_add_${secondModuleName}list").off("click.ibcp").on("click.ibcp", function () {
+            that.${secondModuleName}New();
+        });      //添加
+    },
+    init${className}ListTable: function () {
+        var that = this;
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.init = function () {
+            $('#table_${secondModuleName}list').bootstrapTable({
+                url: '${secondModuleName}/getpage', //请求后台的URL（*）
+                method: 'post', //请求方式（*）
+                toolbar: '#toolbar_${secondModuleName}list', //工具按钮用哪个容器
+                striped: true, //是否显示行间隔色
+                cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                pagination: true, //是否显示分页（*）
+                queryParams: function (params) {
+                    // return that.getQueryParams(params);
+                    var orderBy = {};
+                    if (order == "asc") {
+                        orderBy.asc = sort;
+                    } else if (order == "desc") {
+                        orderBy.desc = sort;
+                    } else {
+                        orderBy = {desc: "createTime"};
+                    }
+                    return {
+                        pageSize: params.limit,                         //页面大小
+                        pageNo: (params.offset / params.limit) + 1,   //页码
+                        orderBy: orderBy,
+                    #foreach ($column in $columns)
+                        #if(${column.attrname} == "createTime"||${column.attrname} == "updateTime")
+                        #else
+
+                        $column.attrname:$("#s_${column.columnName}_${secondModuleName}list").val().trim(),
+                        #end
+                    #end
+                }
+                    ;
+                }, //传递参数（*）
+                responseHandler: function (res) {
+                    if (res.code === 200) {
+                        return {
+                            "total": res.data.total,//总页数
+                            "rows": res.data.records   //数据
+                        };
+                    } else {
+                        $.gritter.add({
+                            title: "提示信息：",
+                            text: "查询数据失败：" + res.message,
+                            time: 10000
+                        });
+                    }
+                },
+                sidePagination: "server", //分页方式：client客户端分页，server服务端分页（*）
+                pageNumber: 1, //初始化加载第一页，默认第一页
+                pageSize: 10, //每页的记录行数（*）
+                pageList: [10, 50, 100, 150], //可供选择的每页的行数（*）
+                search: false, //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+                strictSearch: true,
+                showColumns: true, //是否显示所有的列
+                showRefresh: true, //是否显示刷新按钮
+                minimumCountColumns: 2, //最少允许的列数
+                clickToSelect: true, //是否启用点击选中行
+                // height: 500, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+                showToggle: false, //是否显示详细视图和列表视图的切换按钮
+                cardView: false, //是否显示详细视图
+                detailView: false, //是否显示父子表
+                order: "desc",
+                sort: "createTime",
+                uniqueId: "id", //每一行的唯一标识，一般为主键列
+                buttonsAlign: "right", //按钮位置
+                Icons: 'glyphicon-export',
+                columns: [{
+                    checkbox: true
+                },
+                    #foreach ($column in $columns)
+                        #if(${column.attrname} == "state"||${column.attrname} == "createTime"||${column.attrname} ==
+                            "updateTime")
+                        #else
+
+                {
+                    field: '$column.attrname',
+                    title: '$column.attrname',
+                    align: 'center',
+                    sortable: true,
+                },
+                        #end
+                    #end
+                {
+                    field: 'state',
+                    title: '状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value == 1) {
+                            return "<span class='label label-success'>有效</span>";
+                        } else {
+                            return "<span class='label label-danger'>无效</span>";
+                        }
+                    }
+                },
+                    {
+                        field: 'createTime',
+                        title: '创建时间',
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            if (value != null) {
+                                return new Date(value).format("yyyy-MM-dd hh:mm:ss");
+                            } else {
+                                return "";
+                            }
+                        }
+                    }, {
+                        field: 'updateTime',
+                        title: '更新时间',
+                        sortable: true,
+                        formatter: function (value, row, index) {
+                            if (value != null) {
+                                return new Date(value).format("yyyy-MM-dd hh:mm:ss");
+                            } else {
+                                return "";
+                            }
+                        }
+                    }, {
+                        title: '操作',
+                        formatter: function (value, row, index) {
+                            var dis_online = "";
+                            var dis_offline = "";
+                            if (row.state == 1) {
+                                dis_online = "hide";
+                            } else {
+                                dis_offline = "hide";
+                            }
+
+                            return _.template($("#temp_${secondModuleName}_action").html())({
+                                id: row.id,
+                                state: row.state,
+                                actions: [
+                                    {
+                                        color: "btn-danger",
+                                        name: "删除",
+                                        value: "btn_del_${secondModuleName}List"
+                                    }, {
+                                        color: "btn-success",
+                                        name: "上线",
+                                        value: "btn_state_${secondModuleName}List",
+                                        dis: dis_online,
+                                    }, {
+                                        color: "btn-warning",
+                                        name: "下线",
+                                        value: "btn_state_${secondModuleName}List",
+                                        dis: dis_offline,
+                                    }, {
+                                        color: "btn-primary",
+                                        name: "编辑",
+                                        value: "btn_edit_${secondModuleName}List",
+                                    }
+                                ]
+                            });
+                        }
+                    }],
+                onLoadSuccess: function () {
+
+                    $("#btn_search_${secondModuleName}list").removeClass("disabled");
+                    that.table${className}Finish();
+                    that.initSwitch();
+                    that.initOrderBy();
+                }
+                ,
+                onColumnSwitch: function () {
+                    that.table${className}Finish();
+                }
+                ,
+                onToggle: function () {
+                    that.table${className}Finish();
+                }
+            })
+            ;
+        };
+
+        return oTableInit;
+    },
+    tableSearch: function () {
+        $("#table_${secondModuleName}list").bootstrapTable('refreshOptions', {
+            pageNumber: 1
+        });
+    },
+    table${className}Finish: function () {
+        var that = this;
+        //编辑${className}
+        $("a[data-action=btn_edit_${secondModuleName}List]").on("click.ibcp", function () {
+            var $${secondModuleName} = $(this).closest("span[data-sign=action_${secondModuleName}]");
+            var id = $${secondModuleName}.data("id");
+            that.${secondModuleName}Edit(id);
+
+        });
+        //删除${className}
+        $("a[data-action=btn_del_${secondModuleName}List]").on("click.ibcp", function () {
+            var $${secondModuleName} = $(this).closest("span[data-sign=action_${secondModuleName}]");
+            ${secondModuleName}Id=$${secondModuleName}.data("id")
+            $("#delModal").modal("show");
+        });
+        //点击确定
+        $("#delBack").off().on("click", function () {
+            that.${secondModuleName}Del(${secondModuleName}Id);
+        });
+
+        //${className}状态修改
+        $("a[data-action=btn_state_${secondModuleName}List]").on("click.ibcp", function () {
+            var $${secondModuleName} = $(this).closest("span[data-sign=action_${secondModuleName}]");
+            //点击禁用
+            if ($${secondModuleName}.data("state") == 0) {
+                $("#modal_confirm_info").html(" 您 确 定 要 上 线 ？");
+            } else {
+                $("#modal_confirm_info").html(" 您 确 定 要 下 线 ？");
+            }
+            ${secondModuleName}Id = $${secondModuleName}.data("id");
+            state = $${secondModuleName}.data("state");
+            $("#modal_confirm").modal("show");
+        });
+        //点击禁用确定
+        $("#btn_modal_confirm_ok").off().on("click", function () {
+            that.${secondModuleName}State(${secondModuleName}Id, state);
+        });
+    },
+    tableRefresh: function () {
+        $("#table_${secondModuleName}list").bootstrapTable('refreshOptions', {
+            pageNumber: 1
+        });
+    },
+        ${secondModuleName}New: function () {
+        var that = this;
+        this.${secondModuleName}Detail.resetForm();
+        this.${secondModuleName}Detail.initSelOptions(function () {
+            that.${secondModuleName}Detail.set${className}FormData({}, "#form_${secondModuleName}");
+            that.${secondModuleName}Detail.showPanel("div_edit_${secondModuleName}");
+        });
+    },
+        ${secondModuleName}Edit: function (id) {
+        this.${secondModuleName}Detail.resetForm();
+        this.${secondModuleName}Detail.loadForm(id);
+    },
+        ${secondModuleName}Del: function (id) {
+        var that = this;
+        $.ajax({
+            url: "/${secondModuleName}/delete/" + id,
+            type: "get",
+            data: {},
+            success: function (json) {
+                if (json.code == 200) {
+                    that.tableRefresh();
+                    $.gritter.add({
+                        title: "提示信息：",
+                        text: "删除成功!!!",
+                        time: 5000
+                    });
+                } else {
+                    $.gritter.add({
+                        title: "提示信息：",
+                        text: "删除失败：" + json.message,
+                        time: 10000
+                    });
+                }
+            }
+        });
+    },
+        ${secondModuleName}State: function (id, state) {
+        var text = "下线";
+        var that = this;
+        if (state != 1) {
+            state = 1
+            text = "上线";
+        } else {
+            state = 0
+            text = "下线";
+        }
+        $.ajax({
+            url: "/${secondModuleName}/modifyState",
+            type: "post",
+            data: JSON.stringify({idAry: id, state: state}),
+            contentType: 'application/json',
+            success: function (json) {
+                if (json.code == 200) {
+                    that.tableRefresh();
+                    $.gritter.add({
+                        title: "提示信息：",
+                        text: text + "成功!!!",
+                        time: 5000
+                    });
+                } else {
+                    $.gritter.add({
+                        title: "提示信息：",
+                        text: text + "失败：" + json.message,
+                        time: 10000
+                    });
+                }
+            }
+        });
+    },
+    initSwitch: function () {
+        $("#form_${secondModuleName} input[name='state']").bootstrapSwitch({
+            onText: '有效',
+            offText: '无效',
+            state: true,
+            offColor: "danger",
+            onInit: function (event, state) {
+                state = true;
+            },
+            onSwitchChange: function (event, state) {
+                if (state == true) {
+                    $(this).val("1");
+                } else {
+                    $(this).val("0");
+                }
+            }
+        });
+    },
+    initOrderBy: function () {
+        //点击进行排序
+        $("#table_${secondModuleName}list .th-inner").parent().on("click", function () {
+            // //($(this).attr("data-field"));
+            sort = $(this).attr("data-field")
+            if ($(this).children(".th-inner").hasClass("asc")) {
+                order = "asc";
+            } else if ($(this).children(".th-inner").hasClass("desc")) {
+                order = "desc";
+            }
+        });
+    },
+
+};
+
+var IBCP_${secondModuleName}Detail = function (options) {
+    this.init(options);
+};
+IBCP_${secondModuleName}Detail.prototype = {
+    init: function (options) {
+        this.options = options;
+        var that = this;
+
+        //取消保存
+        $("#${secondModuleName}SaveBack").click(function () {
+            that.showPanel("div_${secondModuleName}_list");
+        });
+
+        //保存
+        $("#btn_${secondModuleName}_save").click(function () {
+            that.save${className}();
+        });
+        //返回列表
+        $("#btn_back_${secondModuleName}list").click(function () {
+            that.showPanel("div_${secondModuleName}_list");
+        });
+
+        that.form${secondModuleName}Validation();
+
+    },
+    showPanel: function (id) {
+        switch (id) {
+            case 'div_edit_${secondModuleName}' :
+                $("#div_${secondModuleName}_list").addClass("hide");
+                $("#div_edit_${secondModuleName}").removeClass("hide");
+                break;
+            case 'div_${secondModuleName}_list' :
+                $("#div_edit_${secondModuleName}").addClass("hide");
+                $("#div_${secondModuleName}_list").removeClass("hide");
+                break;
+            default :
+                $("#div_edit_${secondModuleName}").addClass("hide");
+                $("#div_${secondModuleName}_list").removeClass("hide");
+        }
+    },
+    initSelOptions: function (callBack) {
+        if ($.isFunction(callBack)) {
+            callBack();
+        }
+    },
+    form${secondModuleName}Validation: function () {
+        var that = this;
+        return $("#form_${secondModuleName}").validate({
+            errorElement: 'label', //default input error message container
+            errorClass: 'error', // default input error message class
+            ignore: "",
+            onkeyup: false,
+            onclick: false,
+            onfocusout: false,
+            rules: {
+        #foreach ($column in $columns)
+            #if(${column.attrname} == "id"||${column.attrname} == "state"||${column.attrname} ==
+                "createTime"||${column.attrname} == "updateTime")
+            #else
+
+                ${column.attrname}:{required: true},
+            #end
+        #end
+            },
+        messages: { // custom messages for radio buttons and checkboxes
+            #foreach ($column in $columns)
+                #if(${column.attrname} == "id"||${column.attrname} == "state"||${column.attrname} ==
+                    "createTime"||${column.attrname} == "updateTime")
+                #else
+
+                    ${column.attrname}:{required: "请输入 ${column.attrname}！"},
+                #end
+            #end
+        },
+        errorPlacement: function (error, element) {
+            error.insertAfter(element);
+        },
+        highlight: function (element) { // hightlight error inputs
+            // set error class to the control group
+            $(element).closest('.control-group').removeClass('success').addClass('error');
+        },
+        unhighlight: function (element) { // revert the change dony by hightlight
+            // set error class to the control group
+            $(element).closest('.control-group').removeClass('error');
+        },
+        success: function (label) {
+            // set success class to the control group
+            label.addClass('valid').addClass('help-inline ok').closest('.control-group').removeClass('error').addClass('success');
+        },
+        invalidHandler: function (event, validator) { //display error alert on form submit
+        },
+        submitHandler: function (form) {
+            that.save${className}();
+        }
+    })
+        ;
+    },
+    resetForm: function () {
+        $("#form_${secondModuleName} input[type='text']").val("");
+        $("#form_${secondModuleName} input[type='hidden']").val("");
+        $("#form_${secondModuleName} select").val("");
+        $("#form_${secondModuleName} textarea").val("");
+        $("#form_${secondModuleName} input[type='checkbox']").removeAttr("checked");
+        $("#form_${secondModuleName} input[type='radio']:eq(1)").attr("checked", 'checked');
+    },
+    loadForm: function (id) {
+        var that = this;
+        $.ajax({
+            url: "/${secondModuleName}/" + id,
+            type: "get",
+            data: {},
+            success: function (json) {
+                if (json.code == 200) {
+                    that.resetForm();
+                    that.initSelOptions(function () {
+                        that.showPanel("div_edit_${secondModuleName}");
+                        that.set${className}FormData(json.data, "#form_${secondModuleName}");
+                    });
+                } else {
+                    $.gritter.add({
+                        title: "提示信息：",
+                        text: "获取详情失败：" + json.message,
+                        time: 10000
+                    });
+                }
+            }
+        });
+    },
+    get${className}FormData: function (form) {
+        var data = {};
+        $(form + " input[type='text']").each(function (index) {
+            data[this.name] = $(this).val();
+        });
+        $(form + " input[type='checkbox']").each(function (index) {
+            data[this.name] = $(this).val();
+        });
+        $(form + " input[type='radio']:checked").each(function (index) {
+            data[this.name] = $(this).val();
+        });
+        $(form + " input[type='hidden']").each(function (index) {
+            data[this.name] = $(this).val();
+        });
+        $(form + " input[type='file']").each(function (index) {
+            data[this.name] = $(this).val();
+        });
+        $(form + " select").each(function (index) {
+            data[this.name] = $(this).val();
+        });
+        $(form + " textarea").each(function (index) {
+            data[this.name] = $(this).val();
+        });
+        data["partnerCode"] = $("#partner").val();
+        return data;
+    },
+    set${className}FormData: function (data, form) {
+        // 设置表单信息
+        $.each(data, function (key, value) {
+            if (key == "state" && value == 1) {
+                $(form + " input[name='state']").bootstrapSwitch('state', true)
+            } else if (key == "state" && value != 1) {
+                $(form + "  input[name='state']").bootstrapSwitch('state', false)
+            }
+            $(form + " input[name=" + key + "]").val(value);
+            $(form + " select[name=" + key + "]").val(value);
+            $(form + " textarea[name=" + key + "]").val(value);
+
+        });
+    },
+    save${className}: function () {
+        var that = this;
+        if ($("#form_${secondModuleName}").valid()) {
+            var data = that.get${className}FormData("#form_${secondModuleName}");
+            console.log("save, data=" + JSON.stringify(data));
+
+            $("#btn_${secondModuleName}_save").attr("disabled", true);
+            $.ajax({
+                url: "/${secondModuleName}/addOrUpdate",
+                type: "post",
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (json) {
+                    if (json.code === 200) {
+                        $.gritter.add({
+                            title: "提示信息：",
+                            text: "保存成功！",
+                            time: 2000
+                        });
+                        IBCP_${secondModuleName}List.prototype.tableRefresh();
+                        that.showPanel("div_${secondModuleName}_list");
+                    } else {
+                        $.gritter.add({
+                            title: "提示信息：",
+                            text: "保存失败：" + json.message,
+                            time: 10000
+                        });
+                    }
+                }
+            });
+            $("#btn_${secondModuleName}_save").attr("disabled", false);
+        }
+    },
+};

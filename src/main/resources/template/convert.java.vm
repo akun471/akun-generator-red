@@ -1,0 +1,49 @@
+package ${package}.convert;
+
+import ${package}.entity.${className};
+import ${package}.api.dto.${className}ParamDto;
+import ${package}.api.vo.${className}Vo;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+
+import java.util.List;
+/**
+ *
+ * ${comments}转换器
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Mapper
+public interface ${className}Converter {
+    /**
+    * 转换器
+    */
+    ${className}Converter CONVERTER = Mappers.getMapper(${className}Converter.class);
+
+    /**
+    * ${comments}${className}Dto对象转换
+    *
+    * @param dto
+    * @return {@link ${className}}
+    */
+    ${className} to${className}(${className}ParamDto dto);
+
+    /**
+    * ${comments}${className}对象转换Vo
+    *
+    * @param ${secondModuleName} ${comments}
+    * @return {@link ${className}Vo}
+    */
+    ${className}Vo to${className}Vo(${className} ${secondModuleName});
+
+    /**
+     * ${comments}${className}对象转换Vo
+     *
+     * @param ${secondModuleName}s ${comments}
+     * @return {@link ${className}Vo}
+     */
+        List<${className}Vo> to${className}Vos(List<${className}> ${secondModuleName}s);
+
+}

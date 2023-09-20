@@ -1,0 +1,215 @@
+package ${package}.controller;
+
+import ${package}.api.vo.CommonResponse;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+
+import static java.util.regex.Pattern.compile;
+
+/**
+ * 基本控制器
+ *
+ * @author akun
+ * @Author: Akun
+ * @Date: 2019/2/26
+ * @Version 1.0
+ * @Description:
+ */
+@Slf4j
+public class BaseController<T extends Model> {
+
+    /**
+     * Model服务类
+     */
+    public IService service;
+
+    /**
+     * 驼峰转换为线
+     *
+     * @param str 字符串
+     * @return {@link String}
+     */
+    public static String humpToLine(String str) {
+        Matcher matcher = compile("[A-Z]").matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, "_" + matcher.group(0).toLowerCase());
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    /**
+     * 添加数据
+     *
+     * @param model 数据
+     * @return {@link CommonResponse}
+     */
+    public CommonResponse addModel(Model model) {
+        if (service.save(model)) {
+            log.info("创建成功:{}", model);
+            return CommonResponse.success(model);
+        } else {
+            log.error("创建失败:{}", model);
+            return CommonResponse.failMsg("创建失败");
+        }
+    }
+
+    /**
+     * 添加或更新数据
+     *
+     * @param model 数据
+     * @return {@link CommonResponse}
+     */
+    public CommonResponse addOrUpdateModel(Model model) {
+        if (service.saveOrUpdate(model)) {
+            log.info("创建或修改 成功:{}", model);
+            return CommonResponse.success(model);
+        } else {
+            log.error("创建或修改 失败:{}", model);
+            return CommonResponse.failMsg("创建或修改失败");
+        }
+    }
+
+    /**
+     * 编辑数据
+     *
+     * @param model 数据
+     * @return {@link CommonResponse}
+     */
+    public CommonResponse editModel(Model model) {
+        if (service.updateById(model)) {
+            log.info("编辑成功:{}", model);
+            return CommonResponse.success(model);
+        } else {
+            log.error("编辑失败:{}", model);
+            return CommonResponse.failMsg("编辑失败");
+        }
+    }
+
+    /**
+     * 按id批量删除
+     *
+     * @param idAry ID ARY
+     * @return {@link CommonResponse}
+     */
+    public CommonResponse removeBatchByIds(String idAry) {
+        if (StringUtils.isBlank(idAry) || service.removeBatchByIds(Arrays.asList(idAry.split(",")))) {
+            log.info("删除成功:{}", idAry);
+            return CommonResponse.successMsg("删除成功");
+        } else {
+            log.error("删除失败:{}", idAry);
+            return CommonResponse.failMsg("删除失败");
+        }
+    }
+
+    /**
+     * 按id删除
+     *
+     * @param id Id
+     * @return {@link CommonResponse}
+     */
+    public CommonResponse removeById(Serializable id) {
+        if (service.removeById(id)) {
+            log.info("删除成功:{}", id);
+            return CommonResponse.successMsg("删除成功");
+        } else {
+            log.error("删除失败:{}", id);
+            return CommonResponse.failMsg("删除失败");
+        }
+    }
+
+    /**
+     * 获取全部数据
+     *
+     * @return {@link CommonResponse}
+     */
+    public CommonResponse getAllModel() {
+        List<T> all = service.list();
+        return CommonResponse.success(all);
+    }
+
+    /**
+     * 获取页
+     *
+     * @param jsonObject json对象
+     * @return {@link IPage}
+     */
+    public IPage getPage(JSONObject jsonObject) {
+        Wrapper<T> wrapper = getCondition(jsonObject);
+        Page<T> page = new Page((jsonObject.getLong("pageNo")), jsonObject.getLong("pageSize"));
+        return service.page(page, wrapper);
+    }
+
+    /**
+     * 获取条件
+     *
+     * @param jsonObject json对象
+     * @return {@link Wrapper}<{@link T}>
+     */
+    public Wrapper<T> getCondition(JSONObject jsonObject) {
+        QueryWrapper<T> queryWrapper = Wrappers.<T>query();
+        for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+            String key = entry.getKey();
+            setConditionOrder(queryWrapper, entry, key);
+        }
+        return queryWrapper;
+    }
+
+    /**
+     * 设置条件排序
+     *
+     * @param queryWrapper 查询包装器
+     * @param entry        进入
+     * @param key          钥匙
+     */
+    public void setConditionOrder(QueryWrapper<T> queryWrapper, Map.Entry<String, Object> entry, String key) {
+        if ("orderBy".equals(key)) {
+            if (entry.getValue() != null && !entry.getValue().equals("")) {
+                Map<String, Object> orderBuyMap = (Map<String, Object>) entry.getValue();
+                for (Map.Entry<String, Object> field : orderBuyMap.entrySet()) {
+                    if ("asc".equals(field.getKey())) {
+                        queryWrapper.orderByAsc(humpToLine((String) field.getValue()));
+                    } else {
+                        queryWrapper.orderByDesc(humpToLine((String) field.getValue()));
+                    }
+                }
+            }
+        } else {
+            setConditionInfo(queryWrapper, entry, key);
+        }
+    }
+
+    /**
+     * 设置条件信息
+     *
+     * @param queryWrapper 查询包装器
+     * @param entry        进入
+     * @param key          钥匙
+     */
+    public void setConditionInfo(QueryWrapper<T> queryWrapper, Map.Entry<String, Object> entry, String key) {
+        if ("partnerCode".equals(key)) {
+            // 暂不处理;
+        } else if (!("pageNo".equals(key) || "pageSize".equals(key))) {
+            if (null == entry.getValue()) {
+                queryWrapper.isNull(humpToLine(entry.getKey()));
+            } else if (!"".equals(entry.getValue())) {
+                queryWrapper.eq(humpToLine(entry.getKey()), entry.getValue().toString().trim());
+            }
+        }
+    }
+}

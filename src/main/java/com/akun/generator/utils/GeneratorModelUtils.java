@@ -41,18 +41,18 @@ public class GeneratorModelUtils {
         templates.add("template/logback.vm");
         templates.add("template/pom.vm");
         templates.add("template/pom-api.vm");
-        templates.add("template/pom-dao.vm");
-        templates.add("template/pom-domain.vm");
-//        templates.add("template/pom-manager.vm");
-        templates.add("template/pom-service.vm");
+//        templates.add("template/pom-dao.vm");
+//        templates.add("template/pom-domain.vm");
+////        templates.add("template/pom-manager.vm");
+//        templates.add("template/pom-service.vm");
         templates.add("template/pom-web.vm");
         templates.add("template/spy.properties.vm");
-        templates.add("template/Swagger2.java.vm");
-        templates.add("template/BaseController.java.vm");
+//        templates.add("template/Swagger2.java.vm");
+//        templates.add("template/BaseController.java.vm");
 //        templates.add("template/BaseService.java.vm");
-        templates.add("template/CommonResponse.java.vm");
-        templates.add("template/CommonResponseCodeEnum.java.vm");
-        templates.add("template/MyMetaObjectHandler.java.vm");
+//        templates.add("template/CommonResponse.java.vm");
+//        templates.add("template/CommonResponseCodeEnum.java.vm");
+//        templates.add("template/MyMetaObjectHandler.java.vm");
         return templates;
     }
 

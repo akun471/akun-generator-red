@@ -1,9 +1,12 @@
 package ${package}.dao;
 
-import ${package}.entity.${className};
+import ${package}.bean.${className};
+import ${package}.api.vo.res.${className}ListRes;
+import ${package}.api.vo.req.${className}ListReq;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-
+import org.apache.ibatis.annotations.Param;
+import java.util.List;
 /**
  *
  * ${comments}
@@ -13,6 +16,13 @@ import org.apache.ibatis.annotations.Mapper;
  * @date ${datetime}
  */
 @Mapper
-public interface ${className}Dao extends BaseMapper<${className}> {
+public interface ${className}Mapper extends BaseMapper<${className}> {
 
+    /**
+     * 查询列表
+     *
+     * @param param 参数
+     * @return {@link List}<{@link ${className}ListRes}>
+     */
+    List<${className}ListRes> queryList(@Param("param") ${className}ListReq param);
 }

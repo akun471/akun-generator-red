@@ -17,8 +17,8 @@ public class GeneratorParam {
     private Integer port = 8888;
     private Integer isLogic = 1;
     private String tablePrefix = "t_";
-    private String tableFieldPrefix = "f_";
+    private String tableFieldPrefix;
     private String author = "Akun";
-    private String email = "ext.ahs.wukunkun1@jd.com";
+    private String email = "wukunkun@reddatetech.com";
 
 }

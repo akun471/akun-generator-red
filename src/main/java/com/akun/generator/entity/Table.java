@@ -14,7 +14,7 @@ import java.util.Date;
  * 部门管理
  *
  * @author Akun
- * @email ext.ahs.wukunkun1@jd.com
+ * @email wukunkun@reddatetech.com
  * @date 2019-06-19 10:22:20
  */
 @Data

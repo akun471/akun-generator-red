@@ -1,7 +1,7 @@
 package ${package}.service.impl;
 
 import ${package}.api.dto.${className}ParamDto;
-import ${package}.entity.${className};
+import ${package}.bean.${className};
 import ${package}.service.BaseService;
 import ${package}.service.convert.${className}Converter;
 import ${package}.api.service.${className}Service;

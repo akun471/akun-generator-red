@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="${package}.dao.${className}Dao">
+<mapper namespace="${package}.dao.${className}Mapper">
 
 #if(${enableCache})
 	<!-- 开启二级缓存 -->
@@ -9,12 +9,52 @@
 #end
 #if(${baseResultMap})
 	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="${package}.entity.${className}">
-		#foreach($column in $columns)
-            <result property="${column.attrname}" column="${column.columnName}"/>
-		#end
+	<resultMap id="BaseResultMap" type="${package}.bean.${className}">
+#foreach($column in $columns)
+        <result property="${column.attrname}" column="${column.columnName}"/>
+#end
 	</resultMap>
 
+#end
+
+#if(${enableQueryList})
+	<select id="queryList" resultType="${package}.api.vo.res.${className}ListRes" parameterType="${package}.api.vo.req.${className}ListReq">
+        SELECT
+#foreach($column in $columns)
+        t.${column.columnName} AS ${column.attrname} #if($foreach.hasNext),#end
+
+#end
+        FROM
+        ${tableName} t
+        <where>
+            t.del_flag = 0
+            <if test="param.ids != null and param.ids.size() > 0">
+                and t.unique_id in
+                <foreach collection="param.ids" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+#foreach($column in $baseColumns)
+#if($column.attrType == "String")
+            <if test="param.${column.attrname} != null and param.${column.attrname} != ''">
+#else
+            <if test="param.${column.attrname} != null">
+#end
+                and t.${column.columnName} = #{param.${column.attrname}}
+            </if>
+#end
+            <if test="param.createDateStart != null">
+                and t.create_date >= #{param.createDateStart}
+            </if>
+            <if test="param.createDateEnd != null">
+                <![CDATA[
+                and  t.create_date  <= #{param.createDateEnd}
+                ]]>
+            </if>
+        </where>
+        order by create_date desc
+
+    </select>
 #end
 
 </mapper>

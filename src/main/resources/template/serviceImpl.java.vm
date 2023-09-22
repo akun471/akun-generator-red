@@ -1,10 +1,17 @@
 package ${package}.service.impl;
 
-import ${package}.entity.${className};
-import ${package}.dao.${className}Dao;
+import ${package}.api.vo.req.${className}ListReq;
+import ${package}.api.vo.req.${className}InsertReq;
+import ${package}.api.vo.req.${className}UpdateReq;
+import ${package}.api.vo.res.${className}DetailRes;
+import ${package}.api.vo.res.${className}ListRes;
+import ${package}.convert.${className}Converter;
+import ${package}.bean.${className};
+import ${package}.dao.${className}Mapper;
 import ${package}.service.${className}Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 /**
  * <p>
@@ -16,6 +23,47 @@ import org.springframework.stereotype.Service;
  * @date ${datetime}
  */
 @Service
-public class ${className}ServiceImpl extends ServiceImpl<${className}Dao, ${className}> implements ${className}Service  {
-	
+public class ${className}ServiceImpl extends ServiceImpl<${className}Mapper, ${className}> implements ${className}Service  {
+
+    /**
+     * 转换器
+     */
+    ${className}Converter converter = ${className}Converter.CONVERTER;
+
+    /**
+     * 查询列表
+     *
+     * @param param 参数
+     * @return {@link List}<{@link ${className}ListRes}>
+     */
+    @Override
+    public List<${className}ListRes> queryList(${className}ListReq param){
+        return baseMapper.queryList(param);
+    }
+
+    /**
+     * 新增
+     *
+     * @param param 新增参数
+     * @return {@link Boolean}
+     */
+    @Override
+    public Boolean save(${className}InsertReq param){
+        ${className} ${secondModuleName} = converter.insertReqTo${className}(param);
+        //TODO 新增逻辑填充
+        return save(${secondModuleName});
+    }
+
+    /**
+     * 新增
+     *
+     * @param param 修改参数
+     * @return {@link Boolean}
+     */
+    @Override
+    public Boolean update(${className}UpdateReq param){
+        ${className} ${secondModuleName} = converter.updateReqTo${className}(param);
+        //TODO 修改逻辑填充
+        return updateById(${secondModuleName});
+    }
 }

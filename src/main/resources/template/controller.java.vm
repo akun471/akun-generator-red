@@ -1,19 +1,24 @@
 package ${package}.controller;
 
-import com.alibaba.fastjson.JSONObject;
-
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import ${package}.api.dto.${className}ParamDto;
-import ${package}.api.vo.${className}Vo;
-import ${package}.api.vo.CommonResponse;
+import javax.annotation.Resource;
+import com.bcmp.operate.common.core.controller.BaseController;
+import com.bcmp.operate.common.datatables.DataTable;
+import com.bcmp.operate.common.datatables.ResultData;
+import com.bcmp.operate.common.dto.ResultInfo;
+import com.bcmp.operate.common.dto.ResultInfoUtil;
+import ${package}.api.vo.req.${className}ListReq;
+import ${package}.api.vo.req.${className}InsertReq;
+import ${package}.api.vo.req.${className}UpdateReq;
+import ${package}.api.vo.res.${className}DetailRes;
+import ${package}.api.vo.res.${className}ListRes;
 import ${package}.convert.${className}Converter;
-import ${package}.entity.${className};
 import ${package}.service.${className}Service;
+
 /**
  * <p>
  * $!{comments} 前端控制器
@@ -25,133 +30,96 @@ import ${package}.service.${className}Service;
  */
 
 @RestController
-@RequestMapping("${secondModuleName}")
+@RequestMapping("/v1/${secondModuleName}")
 @Slf4j
 @Api(value = "${className}Controller", tags = {"${comments}操作接口"})
-public class ${className}Controller extends BaseController<${className}> {
+public class ${className}Controller extends BaseController {
 
     /**
      * 转换器
      */
-     ${className}Converter converter = ${className}Converter.CONVERTER;
+    ${className}Converter converter = ${className}Converter.CONVERTER;
+
     /**
      *  $!{comments}服务接口
      */
-    private final ${className}Service ${secondModuleName}Service;
+    @Resource
+    private ${className}Service ${secondModuleName}Service;
 
     /**
-     * 构造函数
-     */
-    @Autowired
-    public ${className}Controller(${className}Service ${secondModuleName}Service) {
-        super.service = ${secondModuleName}Service;
-        this.${secondModuleName}Service = ${secondModuleName}Service;
-    }
-
-    /**
-     * 添加数据
+     * 查询列表
      *
-     * @param ${secondModuleName} 数据
-     * @return {@link CommonResponse}
+     * @param param 参数
+     * @return {@link ResultInfo}<{@link ResultData}<{@link ${className}ListRes}>>
      */
-    @ApiOperation(value = "增加${comments}", httpMethod = "POST")
-    @RequestMapping(value = "add", method = RequestMethod.POST)
-    public CommonResponse add${className}(@RequestBody ${className}ParamDto ${secondModuleName}) {
-        return addModel(converter.to${className}(${secondModuleName}));
+    @ApiOperation(value = "查询列表", notes = "查询列表", httpMethod = "POST")
+    @PostMapping(value = "/queryList")
+    @ResponseBody
+    public ResultInfo<ResultData<${className}ListRes>> queryList(@RequestBody @Validated DataTable<${className}ListReq> param) {
+        startPage(param.getPage());
+        return ResultInfoUtil.success(param.getReturnData(${secondModuleName}Service.queryList(param.getParam())));
     }
 
     /**
-     * 添加或更新数据
-     *
-     * @param ${secondModuleName} 数据
-     * @return {@link CommonResponse}
-     */
-    @ApiOperation(value = "增加or修改${comments}", httpMethod = "POST")
-    @RequestMapping(value = "addOrUpdate", method = RequestMethod.POST)
-    public CommonResponse addOrUpdate(@RequestBody ${className}ParamDto ${secondModuleName}) {
-        return addOrUpdateModel(converter.to${className}(${secondModuleName}));
-    }
-
-    /**
-     * 编辑数据
-     *
-     * @param ${secondModuleName} 数据
-     * @return {@link CommonResponse}
-     */
-    @ApiOperation(value = "编辑${comments}", httpMethod = "POST")
-    @RequestMapping(value = "edit", method = RequestMethod.POST)
-    public CommonResponse edit${className}(@RequestBody ${className}ParamDto ${secondModuleName}) {
-        return editModel(converter.to${className}(${secondModuleName}));
-    }
-
-    /**
-     * 按id删除
-     *
-     * @param id Id
-     * @return {@link CommonResponse}
-     */
-    @ApiOperation(value = "删除${comments}", httpMethod = "GET")
-    @RequestMapping(value = "delete/{id}", method = RequestMethod.GET)
-    public CommonResponse delete${className}(@PathVariable("id") Integer id) {
-        return removeById(id);
-    }
-
-    /**
-
-     * 按id批量删除
-     *
-     * @param idAry ID字符串数组【,】拼接
-     * @return {@link CommonResponse}
-     */
-    @ApiOperation(value = "批量删除${comments},[ , ]分割", httpMethod = "GET")
-    @RequestMapping(value = "delete", method = RequestMethod.GET)
-    public CommonResponse delete${className}(String idAry) {
-        return removeBatchByIds(idAry);
-    }
-
-    /**
-     * 获取全部数据
-     *
-     * @return {@link CommonResponse}
-     */
-    @ApiOperation(value = "查询所有${comments}", httpMethod = "GET")
-    @RequestMapping(value = "getall", method = RequestMethod.GET)
-    public CommonResponse<${className}Vo> getAll${className}() {
-        return getAllModel();
-    }
-
-    /**
-     * 分页获取
-     *
-     * @param jsonObject json对象
-     * @return {@link CommonResponse<${className}Vo>}
-     */
-    @ApiOperation(value = "查询单页${comments}", httpMethod = "POST")
-    @RequestMapping(value = "getpage", method = RequestMethod.POST)
-    @ApiImplicitParam(name = "jsonObject", value = "分页查询参数模板--->\n" +
-            "{  \"pageNo\": 1,\n" +
-            "  \"pageSize\": 10,\n" +
-            "  \"orderBy\": {\"desc\":\"col_name1,col_name2\",\"asc\":\"col_name1,col_name2\"},\n" +
-            "\"col_name1\":\"value\",\n" +
-            "\"col_name2\":\"value\"" +
-            "}", required = true, paramType = "body", dataType = "string", example = "{}")
-    public CommonResponse<IPage<${className}Vo>> getPage${className}(@RequestBody JSONObject jsonObject) {
-        IPage page = getPage(jsonObject);
-        page.setRecords(converter.to${className}Vos(page.getRecords()));
-        return CommonResponse.success(page);
-    }
-
-    /**
-     * 根据ID获取
+     * 根据ID获取详情
      *
      * @param id id
-     * @return {@link CommonResponse<${className}Vo>}
+     * @return {@link ResultInfo<${className}DetailRes>}
      */
-    @ApiOperation(value = "根据ID获取${comments}实体", httpMethod = "GET")
+    @ApiOperation(value = "根据ID获取详情", notes = "根据ID获取详情", httpMethod = "GET")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public CommonResponse<${className}Vo> getModelById(@PathVariable("id") Integer id) {
-        return CommonResponse.success(converter.to${className}Vo(${secondModuleName}Service.getById(id)));
+    public ResultInfo<${className}DetailRes> getDetailById(@PathVariable("id") $pk.attrType id) {
+        return ResultInfoUtil.success(converter.to${className}DetailRes(${secondModuleName}Service.getById(id)));
     }
 
+    /**
+     * 新增
+     *
+     * @param param 新增参数
+     * @return {@link ResultInfo}<{@link Boolean}>
+     */
+    @ApiOperation(value = "新增", notes = "新增", httpMethod = "POST")
+    @PostMapping("/save")
+    @ResponseBody
+    public ResultInfo<Boolean> save(@RequestBody @Validated ${className}InsertReq param) {
+        return ResultInfoUtil.success(${secondModuleName}Service.save(param));
+    }
+
+    /**
+     * 新增
+     *
+     * @param param 修改参数
+     * @return {@link ResultInfo}<{@link Boolean}>
+     */
+    @ApiOperation(value = "修改", notes = "修改", httpMethod = "POST")
+    @PostMapping("/update")
+    @ResponseBody
+    public ResultInfo<Boolean> update(@RequestBody @Validated ${className}UpdateReq param) {
+        return ResultInfoUtil.success(${secondModuleName}Service.update(param));
+    }
+
+    /**
+     * 根据id删除
+     *
+     * @param id Id
+     * @return {@link ResultInfo}<{@link Boolean}>
+     */
+    @ApiOperation(value = "根据id删除", notes = "根据id删除", httpMethod = "GET")
+    @RequestMapping(value = "delete/{id}", method = RequestMethod.GET)
+    public ResultInfo<Boolean> deleteById(@PathVariable("id") $pk.attrType id) {
+        return ResultInfoUtil.success(${secondModuleName}Service.removeById(id));
+    }
+
+    /**
+     * 根据id批量删除
+     *
+     * @param idList Id列表
+     * @return {@link ResultInfo}<{@link Boolean}>
+     */
+    @ApiOperation(value = "批量删除", notes = "批量删除", httpMethod = "GET")
+    @RequestMapping(value = "delete", method = RequestMethod.GET)
+    public ResultInfo<Boolean> deleteByIds(List<$pk.attrType> idList) {
+        return ResultInfoUtil.success(${secondModuleName}Service.removeByIds(idList));
+    }
 
 }

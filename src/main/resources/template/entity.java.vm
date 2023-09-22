@@ -1,4 +1,4 @@
-package ${package}.entity;
+package ${package}.bean;
 
 
 import com.baomidou.mybatisplus.annotation.*;
@@ -23,7 +23,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @TableName(value = "${tableName}",resultMap = "BaseResultMap")
-@ApiModel(value="${className}",description="${comments}-${className}")
+@ApiModel(value = "${className}",description="${comments}-${className}")
 public class ${className} extends Model<${className}> {
 
     /**
@@ -41,34 +41,34 @@ public class ${className} extends Model<${className}> {
     /**
      * $column.comments
      */
-    @TableId(value="$column.columnName", type= IdType.AUTO)
-    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    @TableId(value = "$column.columnName", type = IdType.AUTO)
+    @ApiModelProperty(value = "$column.comments", name="$column.attrname")
     private $column.attrType $column.attrname;
-#elseif($column.columnName == "delete_flag")
+#elseif($column.columnName == "del_flag")
     @TableField("$column.columnName")
     @TableLogic
-    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    @ApiModelProperty(value="$column.comments", name ="$column.attrname")
     private $column.attrType $column.attrname;
 #elseif($column.columnName == "create_time")
     /**
      * 创建时间
      */
     @TableField(value = "$column.columnName", fill = FieldFill.INSERT)
-    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    @ApiModelProperty(value = "$column.comments", name = "$column.attrname")
     private $column.attrType $column.attrname;
 #elseif($column.columnName == "update_time")
     /**
      * 修改时间
      */
     @TableField(value = "$column.columnName", fill = FieldFill.INSERT_UPDATE)
-    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    @ApiModelProperty(value = "$column.comments", name = "$column.attrname")
     private $column.attrType $column.attrname;
 #else
     /**
      * $column.comments
      */
     @TableField("$column.columnName")
-    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    @ApiModelProperty(value = "$column.comments", name = "$column.attrname")
     private $column.attrType $column.attrname;
 #end
 

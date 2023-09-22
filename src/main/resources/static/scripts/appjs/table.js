@@ -226,7 +226,7 @@ IBCP_tableList.prototype = {
         if (tablePrefix) {
             href += "&tablePrefix=" + tablePrefix;
         }
-        if (tablePrefix) {
+        if (tableFieldPrefix) {
             href += "&tableFieldPrefix=" + tableFieldPrefix;
         }
         if (author) {

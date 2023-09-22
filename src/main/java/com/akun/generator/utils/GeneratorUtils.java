@@ -28,6 +28,23 @@ import java.util.zip.ZipOutputStream;
  * @date 2016年12月19日 下午11:40:24 ,2019年6月13日17:16:41
  */
 public class GeneratorUtils {
+    static List<String> unBaseColumns = new ArrayList<String>();
+
+    static {
+        unBaseColumns.add("funique_id");
+        unBaseColumns.add("fcreator");
+        unBaseColumns.add("fcreate_date");
+        unBaseColumns.add("fmodifier");
+        unBaseColumns.add("fmodify_date");
+        unBaseColumns.add("unique_id");
+        unBaseColumns.add("creator");
+        unBaseColumns.add("create_date");
+        unBaseColumns.add("modifier");
+        unBaseColumns.add("modify_date");
+        unBaseColumns.add("create_time");
+        unBaseColumns.add("update_time");
+        unBaseColumns.add("id");
+    }
 
     public static List<String> getTemplates() {
         List<String> templates = new ArrayList<String>();
@@ -42,8 +59,11 @@ public class GeneratorUtils {
 //        templates.add("template/serviceImpl.java.vm-bak");
         templates.add("template/service.java.vm");
         templates.add("template/serviceImpl.java.vm");
-        templates.add("template/entityParamDto.java.vm");
-        templates.add("template/entityParamVo.java.vm");
+        templates.add("template/entityDetailRes.java.vm");
+        templates.add("template/entityInsertReq.java.vm");
+        templates.add("template/entityListReq.java.vm");
+        templates.add("template/entityListRes.java.vm");
+        templates.add("template/entityUpdateReq.java.vm");
         templates.add("template/convert.java.vm");
 //        templates.add("template/main.txt.vm");
         return templates;
@@ -68,15 +88,18 @@ public class GeneratorUtils {
 
         //列信息
         List<ColumnEntity> columsList = new ArrayList<>();
+        List<ColumnEntity> baseColumsList = new ArrayList<>();
+        boolean flag = false;
         for (Map<String, String> column : columns) {
             ColumnEntity columnEntity = new ColumnEntity();
-            columnEntity.setColumnName(tableFieldToJava(column.get("columnName"), param.getTableFieldPrefix()));
+            columnEntity.setColumnName(column.get("columnName"));
             columnEntity.setDataType(column.get("dataType"));
             columnEntity.setComments(column.get("columnComment"));
             columnEntity.setExtra(column.get("extra"));
 
             //列名转换成Java属性名
-            String attrName = columnToJava(columnEntity.getColumnName());
+
+            String attrName = columnToJava(tableFieldToJava(columnEntity.getColumnName(), param.getTableFieldPrefix()));
             columnEntity.setAttrName(attrName);
             columnEntity.setAttrname(StringUtils.uncapitalize(attrName));
 
@@ -88,10 +111,18 @@ public class GeneratorUtils {
             if ("PRI".equalsIgnoreCase(column.get("columnKey")) && tableEntity.getPk() == null) {
                 tableEntity.setPk(columnEntity);
             }
+            //是否包含逻辑删除
+            if ("delFlag".equalsIgnoreCase(columnEntity.getAttrName())) {
+                flag = true;
+            }
 
             columsList.add(columnEntity);
+            if (!unBaseColumns.contains(columnEntity.getColumnName())) {
+                baseColumsList.add(columnEntity);
+            }
         }
         tableEntity.setColumns(columsList);
+        tableEntity.setBaseColumns(baseColumsList);
 
         //没主键，则第一个字段为主键
         if (tableEntity.getPk() == null) {
@@ -112,6 +143,7 @@ public class GeneratorUtils {
         map.put("classname", tableEntity.getClassname());
         map.put("pathName", tableEntity.getClassname().toLowerCase());
         map.put("columns", tableEntity.getColumns());
+        map.put("baseColumns", tableEntity.getBaseColumns());
         map.put("package", param.getPackageName());
         map.put("author", param.getAuthor());
         map.put("email", param.getEmail());
@@ -120,6 +152,7 @@ public class GeneratorUtils {
         map.put("secondModuleName", toLowerCaseFirstOne(className));
         map.put("enableCache", false);  //不开启二级缓存
         map.put("baseResultMap", true);
+        map.put("enableQueryList", flag);
         VelocityContext context = new VelocityContext(map);
 
         //获取模板列表
@@ -203,24 +236,36 @@ public class GeneratorUtils {
         }
 
         if (template.contains("service.java.vm")) {
-            packagePath = packagePath.replace("-web", "-service");
+//            packagePath = packagePath.replace("-web", "-service");
             return packagePath + "service" + File.separator + className + "Service.java";
         }
-        if (template.contains("entityParamDto.java.vm")) {
+        if (template.contains("entityDetailRes.java.vm")) {
             packagePath = packagePath.replace("-web", "-api");
-            return packagePath + "api/dto" + File.separator + className + "ParamDto.java";
+            return packagePath + "api/vo/res" + File.separator + className + "DetailRes.java";
         }
-        if (template.contains("entityParamVo.java.vm")) {
+        if (template.contains("entityInsertReq.java.vm")) {
             packagePath = packagePath.replace("-web", "-api");
-            return packagePath + "api/vo" + File.separator + className + "Vo.java";
+            return packagePath + "api/vo/req" + File.separator + className + "InsertReq.java";
+        }
+        if (template.contains("entityListReq.java.vm")) {
+            packagePath = packagePath.replace("-web", "-api");
+            return packagePath + "api/vo/req" + File.separator + className + "ListReq.java";
+        }
+        if (template.contains("entityListRes.java.vm")) {
+            packagePath = packagePath.replace("-web", "-api");
+            return packagePath + "api/vo/res" + File.separator + className + "ListRes.java";
+        }
+        if (template.contains("entityUpdateReq.java.vm")) {
+            packagePath = packagePath.replace("-web", "-api");
+            return packagePath + "api/vo/req" + File.separator + className + "UpdateReq.java";
         }
         if (template.contains("mapper.java.vm")) {
-            packagePath = packagePath.replace("-web", "-dao");
-            return packagePath + "dao" + File.separator + className + "Dao.java";
+//            packagePath = packagePath.replace("-web", "-dao");
+            return packagePath + "dao" + File.separator + className + "Mapper.java";
         }
         if (template.contains("entity.java.vm")) {
-            packagePath = packagePath.replace("-web", "-domain");
-            return packagePath + "entity" + File.separator + className + ".java";
+//            packagePath = packagePath.replace("-web", "-domain");
+            return packagePath + "bean" + File.separator + className + ".java";
         }
         if (template.contains("entity.html.vm")) {
             return moduleName + File.separator + moduleName + "-web/src/main/resources/templates/" + toLowerCaseFirstOne(className) + ".html";
@@ -232,7 +277,7 @@ public class GeneratorUtils {
             return packagePath + "controller" + File.separator + className + "Controller.java";
         }
         if (template.contains("serviceImpl.java.vm")) {
-            packagePath = packagePath.replace("-web", "-service");
+//            packagePath = packagePath.replace("-web", "-service");
             return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
         }
         if (template.contains("convert.java.vm")) {
@@ -247,7 +292,7 @@ public class GeneratorUtils {
 //            return packagePath + "manager" + File.separator + "impl" + File.separator + className + "ManagerImpl.java";
 //        }
         if (template.contains("mapper.xml.vm")) {
-            return moduleName + File.separator + moduleName + "-dao/src" + File.separator + "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + className + "Mapper.xml";
+            return moduleName + File.separator + moduleName + "-web/src" + File.separator + "main" + File.separator + "resources" + File.separator + "mapper" + File.separator + className + "Mapper.xml";
         }
         if (template.contains("main.txt.vm")) {
             return frontPath + "views" + File.separator + moduleName + File.separator + toLowerCaseFirstOne(className) + File.separator + "main.txt";

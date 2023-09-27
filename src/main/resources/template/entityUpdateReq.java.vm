@@ -2,7 +2,8 @@ package ${package}.api.vo.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
@@ -36,7 +37,12 @@ public class ${className}UpdateReq implements Serializable {
     /**
      * $column.comments
      */
-    @ApiModelProperty(value = "$column.comments",name = "$column.attrname")
+    @ApiModelProperty(value = "$column.comments",name = "$column.attrname" ,required = true, position = $velocityCount)
+#if($column.attrType != "String")
+    @NotEmpty
+#else
+    @NotNull
+#end
     private $column.attrType $column.attrname;
 #end
 #end

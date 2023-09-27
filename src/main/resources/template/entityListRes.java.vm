@@ -26,7 +26,7 @@ public class ${className}ListRes implements Serializable {
     /**
      * $column.comments
      */
-    @ApiModelProperty(value="$column.comments",name="$column.attrname")
+    @ApiModelProperty(value = "$column.comments", name= "$column.attrname", position = $velocityCount)
     private $column.attrType $column.attrname;
 #end
 #end

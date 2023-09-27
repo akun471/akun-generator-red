@@ -36,7 +36,7 @@ public class ${className}ListReq implements Serializable {
     /**
      * $column.comments
      */
-    @ApiModelProperty(value = "$column.comments",name = "$column.attrname")
+    @ApiModelProperty(value = "$column.comments",name = "$column.attrname", position = $velocityCount)
     private $column.attrType $column.attrname;
 #end
 #end

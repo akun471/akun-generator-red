@@ -18,8 +18,8 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "${className}ListReq",description= "${comments}查询列表参数对象")
-public class ${className}ListReq implements Serializable {
+@ApiModel(value = "Get${className}ListReq",description= "${comments}查询列表参数对象")
+public class Get${className}ListReq implements Serializable {
 
     /**
      * 版本号

@@ -39,9 +39,9 @@ public class ${className}UpdateReq implements Serializable {
      */
     @ApiModelProperty(value = "$column.comments",name = "$column.attrname" ,required = true, position = $velocityCount)
 #if($column.attrType != "String")
-    @NotEmpty
-#else
     @NotNull
+#else
+    @NotEmpty
 #end
     private $column.attrType $column.attrname;
 #end

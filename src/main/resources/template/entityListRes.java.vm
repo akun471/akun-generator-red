@@ -13,8 +13,8 @@ import lombok.Data;
  * @date ${datetime}
  */
 @Data
-@ApiModel(value="${className}ListRes",description="${comments}列表对象")
-public class ${className}ListRes implements Serializable {
+@ApiModel(value="Get${className}ListRes",description="${comments}列表对象")
+public class Get${className}ListRes implements Serializable {
 
     /**
      * 版本号

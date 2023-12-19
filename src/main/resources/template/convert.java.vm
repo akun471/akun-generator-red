@@ -1,11 +1,11 @@
 package ${package}.convert;
 
 import ${package}.bean.${className};
-import ${package}.api.vo.req.${className}ListReq;
-import ${package}.api.vo.req.${className}InsertReq;
+import ${package}.api.vo.req.Get${className}ListReq;
+import ${package}.api.vo.req.${className}CreateReq;
 import ${package}.api.vo.req.${className}UpdateReq;
 import ${package}.api.vo.res.${className}DetailRes;
-import ${package}.api.vo.res.${className}ListRes;
+import ${package}.api.vo.res.Get${className}ListRes;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -32,7 +32,7 @@ public interface ${className}Converter {
     * @param param
     * @return {@link ${className}}
     */
-    ${className} insertReqTo${className}(${className}InsertReq param);
+    ${className} insertReqTo${className}(${className}CreateReq param);
 
     /**
     * 修改参数转换${className}

@@ -63,6 +63,34 @@ public class ${className} extends Model<${className}> {
     @TableField(value = "$column.columnName", fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value = "$column.comments", name = "$column.attrname", position = $velocityCount)
     private $column.attrType $column.attrname;
+#elseif($column.columnName == "fcreator")
+    /**
+     * $column.comments
+     */
+    @TableField(value = "$column.columnName", fill = FieldFill.INSERT)
+    @ApiModelProperty(value = "$column.comments", name = "$column.attrname", position = $velocityCount)
+    private $column.attrType $column.attrname;
+#elseif($column.columnName == "fmodifier")
+    /**
+     * $column.comments
+     */
+    @TableField(value = "$column.columnName", fill = FieldFill.INSERT_UPDATE)
+    @ApiModelProperty(value = "$column.comments", name = "$column.attrname", position = $velocityCount)
+    private $column.attrType $column.attrname;
+#elseif($column.columnName == "fcreate_date")
+    /**
+     * $column.comments
+     */
+    @TableField(value = "$column.columnName", fill = FieldFill.INSERT)
+    @ApiModelProperty(value = "$column.comments", name = "$column.attrname", position = $velocityCount)
+    private $column.attrType $column.attrname;
+#elseif($column.columnName == "fmodify_date")
+    /**
+     * $column.comments
+     */
+    @TableField(value = "$column.columnName", fill = FieldFill.INSERT_UPDATE)
+    @ApiModelProperty(value = "$column.comments", name = "$column.attrname", position = $velocityCount)
+    private $column.attrType $column.attrname;
 #else
     /**
      * $column.comments

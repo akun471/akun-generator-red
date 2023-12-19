@@ -60,7 +60,7 @@ public class GeneratorUtils {
         templates.add("template/service.java.vm");
         templates.add("template/serviceImpl.java.vm");
         templates.add("template/entityDetailRes.java.vm");
-        templates.add("template/entityInsertReq.java.vm");
+        templates.add("template/entityCreateReq.java.vm");
         templates.add("template/entityListReq.java.vm");
         templates.add("template/entityListRes.java.vm");
         templates.add("template/entityUpdateReq.java.vm");
@@ -243,17 +243,17 @@ public class GeneratorUtils {
             packagePath = packagePath.replace("-web", "-api");
             return packagePath + "api/vo/res" + File.separator + className + "DetailRes.java";
         }
-        if (template.contains("entityInsertReq.java.vm")) {
+        if (template.contains("entityCreateReq.java.vm")) {
             packagePath = packagePath.replace("-web", "-api");
-            return packagePath + "api/vo/req" + File.separator + className + "InsertReq.java";
+            return packagePath + "api/vo/req" + File.separator + className + "CreateReq.java";
         }
         if (template.contains("entityListReq.java.vm")) {
             packagePath = packagePath.replace("-web", "-api");
-            return packagePath + "api/vo/req" + File.separator + className + "ListReq.java";
+            return packagePath + "api/vo/req" + File.separator + "Get" + className + "ListReq.java";
         }
         if (template.contains("entityListRes.java.vm")) {
             packagePath = packagePath.replace("-web", "-api");
-            return packagePath + "api/vo/res" + File.separator + className + "ListRes.java";
+            return packagePath + "api/vo/res" + File.separator + "Get" + className + "ListRes.java";
         }
         if (template.contains("entityUpdateReq.java.vm")) {
             packagePath = packagePath.replace("-web", "-api");

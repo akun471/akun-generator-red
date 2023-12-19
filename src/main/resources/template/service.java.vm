@@ -1,11 +1,11 @@
 package ${package}.service;
 
 import ${package}.bean.${className};
-import ${package}.api.vo.req.${className}ListReq;
-import ${package}.api.vo.req.${className}InsertReq;
+import ${package}.api.vo.req.Get${className}ListReq;
+import ${package}.api.vo.req.${className}CreateReq;
 import ${package}.api.vo.req.${className}UpdateReq;
 import ${package}.api.vo.res.${className}DetailRes;
-import ${package}.api.vo.res.${className}ListRes;
+import ${package}.api.vo.res.Get${className}ListRes;
 import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
 
@@ -24,9 +24,9 @@ public interface ${className}Service extends IService<${className}> {
      * 查询列表
      *
      * @param param 参数
-     * @return {@link List}<{@link ${className}ListRes}>
+     * @return {@link List}<{@link Get${className}ListRes}>
      */
-    List<${className}ListRes> queryList(${className}ListReq param);
+    List<Get${className}ListRes> queryList(Get${className}ListReq param);
 
     /**
      * 新增
@@ -34,7 +34,7 @@ public interface ${className}Service extends IService<${className}> {
      * @param param 新增参数
      * @return {@link Boolean}
      */
-     Boolean save(${className}InsertReq param);
+     Boolean save(${className}CreateReq param);
 
     /**
      * 新增

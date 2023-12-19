@@ -1,16 +1,17 @@
 package ${package}.service.impl;
 
-import ${package}.api.vo.req.${className}ListReq;
-import ${package}.api.vo.req.${className}InsertReq;
+import ${package}.api.vo.req.Get${className}ListReq;
+import ${package}.api.vo.req.${className}CreateReq;
 import ${package}.api.vo.req.${className}UpdateReq;
 import ${package}.api.vo.res.${className}DetailRes;
-import ${package}.api.vo.res.${className}ListRes;
+import ${package}.api.vo.res.Get${className}ListRes;
 import ${package}.convert.${className}Converter;
 import ${package}.bean.${className};
 import ${package}.dao.${className}Mapper;
 import ${package}.service.${className}Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
@@ -34,10 +35,10 @@ public class ${className}ServiceImpl extends ServiceImpl<${className}Mapper, ${c
      * 查询列表
      *
      * @param param 参数
-     * @return {@link List}<{@link ${className}ListRes}>
+     * @return {@link List}<{@link Get${className}ListRes}>
      */
     @Override
-    public List<${className}ListRes> queryList(${className}ListReq param){
+    public List<Get${className}ListRes> queryList(Get${className}ListReq param){
         return baseMapper.queryList(param);
     }
 
@@ -47,8 +48,9 @@ public class ${className}ServiceImpl extends ServiceImpl<${className}Mapper, ${c
      * @param param 新增参数
      * @return {@link Boolean}
      */
+    @Transactional(rollbackFor = {Exception.class})
     @Override
-    public Boolean save(${className}InsertReq param){
+    public Boolean save(${className}CreateReq param){
         ${className} ${secondModuleName} = converter.insertReqTo${className}(param);
         //TODO 新增逻辑填充
         return save(${secondModuleName});
@@ -60,6 +62,7 @@ public class ${className}ServiceImpl extends ServiceImpl<${className}Mapper, ${c
      * @param param 修改参数
      * @return {@link Boolean}
      */
+    @Transactional(rollbackFor = {Exception.class})
     @Override
     public Boolean update(${className}UpdateReq param){
         ${className} ${secondModuleName} = converter.updateReqTo${className}(param);

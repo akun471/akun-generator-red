@@ -18,7 +18,7 @@
 #end
 
 #if(${enableQueryList})
-	<select id="queryList" resultType="${package}.api.vo.res.${className}ListRes" parameterType="${package}.api.vo.req.${className}ListReq">
+	<select id="queryList" resultType="${package}.api.vo.res.Get${className}ListRes" parameterType="${package}.api.vo.req.Get${className}ListReq">
         SELECT
 #foreach($column in $columns)
         t.${column.columnName} AS ${column.attrname} #if($foreach.hasNext),#end
@@ -27,7 +27,7 @@
         FROM
         ${tableName} t
         <where>
-            t.del_flag = 0
+            t.fdel_flag = 0
             <if test="param.ids != null and param.ids.size() > 0">
                 and t.unique_id in
                 <foreach collection="param.ids" item="item" open="(" close=")" separator=",">
@@ -44,15 +44,15 @@
             </if>
 #end
             <if test="param.createDateStart != null">
-                and t.create_date >= #{param.createDateStart}
+                and t.fcreate_date >= #{param.createDateStart}
             </if>
             <if test="param.createDateEnd != null">
                 <![CDATA[
-                and  t.create_date  <= #{param.createDateEnd}
+                and  t.fcreate_date  <= #{param.createDateEnd}
                 ]]>
             </if>
         </where>
-        order by create_date desc
+        order by t.fcreate_date desc
 
     </select>
 #end

@@ -19,8 +19,8 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@ApiModel(value = "${className}InsertReq",description= "${comments}插入参数对象")
-public class ${className}InsertReq implements Serializable {
+@ApiModel(value = "${className}CreateReq",description= "${comments}插入参数对象")
+public class ${className}CreateReq implements Serializable {
 
     /**
      * 版本号
@@ -34,9 +34,9 @@ public class ${className}InsertReq implements Serializable {
      */
     @ApiModelProperty(value = "$column.comments",name = "$column.attrname" ,required = true, position = $velocityCount)
 #if($column.attrType != "String")
-    @NotEmpty
-#else
     @NotNull
+#else
+    @NotEmpty
 #end
     private $column.attrType $column.attrname;
 #end

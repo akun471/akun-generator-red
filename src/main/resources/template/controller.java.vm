@@ -6,16 +6,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
-import com.bcmp.operate.common.core.controller.BaseController;
-import com.bcmp.operate.common.datatables.DataTable;
-import com.bcmp.operate.common.datatables.ResultData;
-import com.bcmp.operate.common.dto.ResultInfo;
-import com.bcmp.operate.common.dto.ResultInfoUtil;
-import ${package}.api.vo.req.${className}ListReq;
-import ${package}.api.vo.req.${className}InsertReq;
+import com.bcmp.platlayer.common.core.controller.BaseController;
+import com.bcmp.platlayer.common.datatables.ReqListData;
+import com.bcmp.platlayer.common.datatables.ResListData;
+import com.bcmp.platlayer.common.dto.ResData;
+import com.bcmp.platlayer.common.dto.ResDataUtil;
+import ${package}.api.vo.req.Get${className}ListReq;
+import ${package}.api.vo.req.${className}CreateReq;
 import ${package}.api.vo.req.${className}UpdateReq;
 import ${package}.api.vo.res.${className}DetailRes;
-import ${package}.api.vo.res.${className}ListRes;
+import ${package}.api.vo.res.Get${className}ListRes;
 import ${package}.convert.${className}Converter;
 import ${package}.service.${className}Service;
 import java.util.List;
@@ -51,100 +51,100 @@ public class ${className}Controller extends BaseController {
      * 查询列表
      *
      * @param param 参数
-     * @return {@link ResultInfo}<{@link ResultData}<{@link ${className}ListRes}>>
+     * @return {@link ResData}<{@link ResListData}<{@link Get${className}ListRes}>>
      */
     @ApiOperation(value = "查询列表", notes = "查询列表", httpMethod = "POST")
-    @PostMapping(value = "/queryList")
+    @PostMapping(value = "/list")
     @ResponseBody
-    public ResultInfo<ResultData<${className}ListRes>> queryList(@RequestBody @Validated DataTable<${className}ListReq> param) {
+    public ResData<ResListData<Get${className}ListRes>> list(@RequestBody @Validated ReqListData<Get${className}ListReq> param) {
         startPage(param.getPage());
-        return ResultInfoUtil.success(param.getReturnData(${secondModuleName}Service.queryList(param.getParam())));
+        return ResDataUtil.success(param.getReturnData(${secondModuleName}Service.queryList(param.getParam())));
     }
 
     /**
      * 根据ID获取详情
      *
      * @param id id
-     * @return {@link ResultInfo<${className}DetailRes>}
+     * @return {@link ResData<${className}DetailRes>}
      */
     @ApiOperation(value = "根据ID获取详情", notes = "根据ID获取详情", httpMethod = "GET")
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResultInfo<${className}DetailRes> getDetailById(@PathVariable("id") $pk.attrType id) {
-        return ResultInfoUtil.success(converter.to${className}DetailRes(${secondModuleName}Service.getById(id)));
+    @RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
+    public ResData<${className}DetailRes> getDetailById(@PathVariable("id") $pk.attrType id) {
+        return ResDataUtil.success(converter.to${className}DetailRes(${secondModuleName}Service.getById(id)));
     }
 
     /**
      * 新增
      *
      * @param param 新增参数
-     * @return {@link ResultInfo}<{@link Boolean}>
+     * @return {@link ResData}<{@link Boolean}>
      */
     @ApiOperation(value = "新增", notes = "新增", httpMethod = "POST")
     @PostMapping("/save")
     @ResponseBody
-    public ResultInfo<Boolean> save(@RequestBody @Validated ${className}InsertReq param) {
-        return ResultInfoUtil.success(${secondModuleName}Service.save(param));
+    public ResData<Boolean> save(@RequestBody @Validated ${className}CreateReq param) {
+        return ResDataUtil.success(${secondModuleName}Service.save(param));
     }
 
     /**
      * 新增
      *
      * @param param 修改参数
-     * @return {@link ResultInfo}<{@link Boolean}>
+     * @return {@link ResData}<{@link Boolean}>
      */
     @ApiOperation(value = "修改", notes = "修改", httpMethod = "POST")
     @PostMapping("/update")
     @ResponseBody
-    public ResultInfo<Boolean> update(@RequestBody @Validated ${className}UpdateReq param) {
-        return ResultInfoUtil.success(${secondModuleName}Service.update(param));
+    public ResData<Boolean> update(@RequestBody @Validated ${className}UpdateReq param) {
+        return ResDataUtil.success(${secondModuleName}Service.update(param));
     }
 
     /**
      * 根据id删除
      *
-     * @param id Id
-     * @return {@link ResultInfo}<{@link Boolean}>
+     * @param primaryKey 主键
+     * @return {@link ResData}<{@link Boolean}>
      */
     @ApiOperation(value = "删除", notes = "根据id删除", httpMethod = "POST")
-    @RequestMapping(value = "delete/{id}", method = RequestMethod.POST)
-    public ResultInfo<Boolean> deleteById(@PathVariable("id") $pk.attrType id) {
-        return ResultInfoUtil.success(${secondModuleName}Service.removeById(id));
+    @RequestMapping(value = "delete", method = RequestMethod.POST)
+    public ResData<Boolean> deleteById(@RequestBody @Validated PrimaryKey primaryKey) {
+        return ResDataUtil.success(${secondModuleName}Service.removeById(primaryKey.getUniqueId()));
     }
 
     /**
      * 启用
      *
-     * @param id Id
-     * @return {@link ResultInfo}<{@link Boolean}>
+     * @param primaryKey 主键
+     * @return {@link ResData}<{@link Boolean}>
      */
     @ApiOperation(value = "启用", notes = "根据id启用", httpMethod = "POST")
-    @RequestMapping(value = "start/{id}", method = RequestMethod.POST)
-    public ResultInfo<Boolean> start(@PathVariable("id") $pk.attrType id) {
-        return ResultInfoUtil.success(${secondModuleName}Service.removeById(id));
+    @RequestMapping(value = "enable", method = RequestMethod.POST)
+    public ResData<Boolean> enable(@RequestBody @Validated PrimaryKey primaryKey) {
+        return ResDataUtil.success(${secondModuleName}Service.removeById(primaryKey.getUniqueId()));
     }
 
     /**
      * 停用
      *
-     * @param id Id
-     * @return {@link ResultInfo}<{@link Boolean}>
+     * @param primaryKey 主键
+     * @return {@link ResData}<{@link Boolean}>
      */
     @ApiOperation(value = "停用", notes = "根据id停用", httpMethod = "POST")
-    @RequestMapping(value = "stop/{id}", method = RequestMethod.POST)
-    public ResultInfo<Boolean> stop(@PathVariable("id") $pk.attrType id) {
-        return ResultInfoUtil.success(${secondModuleName}Service.removeById(id));
+    @RequestMapping(value = "disable", method = RequestMethod.POST)
+    public ResData<Boolean> disable(@RequestBody @Validated PrimaryKey primaryKey) {
+        return ResDataUtil.success(${secondModuleName}Service.removeById(primaryKey.getUniqueId()));
     }
 
     /**
      * 根据id批量删除
      *
      * @param idList Id列表
-     * @return {@link ResultInfo}<{@link Boolean}>
+     * @return {@link ResData}<{@link Boolean}>
      */
     @ApiOperation(value = "批量删除", notes = "根据id批量删除", httpMethod = "POST")
     @RequestMapping(value = "delete", method = RequestMethod.POST)
-    public ResultInfo<Boolean> deleteByIds(List<$pk.attrType> idList) {
-        return ResultInfoUtil.success(${secondModuleName}Service.removeByIds(idList));
+    public ResData<Boolean> deleteByIds(List<$pk.attrType> idList) {
+        return ResDataUtil.success(${secondModuleName}Service.removeByIds(idList));
     }
 
 }

@@ -35,9 +35,9 @@ spring:
       datasource:
         primary:
           driverClassName: com.mysql.jdbc.Driver
-          url: jdbc:mysql://192.168.1.177:3306/dynamic_data_source?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+          url: jdbc:mysql://127.0.0.1:3306/test_data_source?useUnicode=true&characterEncoding=UTF-8&useSSL=false
           username: root
-          password: Red80@80
+          password: 1q2w3e4r
 #        TODO   dynamicDataSource高版本才支持，有兼容问题，需要重构部分代码结构
 #          init:
 #            schema: classpath*:db/init_schema.sql # 配置则生效,自动初始化表结构

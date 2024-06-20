@@ -61,8 +61,8 @@
 
         <!-- 公共包-->
         <dependency>
-            <groupId>com.bcmp.operate</groupId>
-            <artifactId>bcmp-operate-common-core</artifactId>
+            <groupId>com.bcmp.platlayer</groupId>
+            <artifactId>bcmp-platlayer-common-core</artifactId>
             <version>${operate.version}</version>
         </dependency>
 
